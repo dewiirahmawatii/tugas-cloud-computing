@@ -55,6 +55,101 @@
   animation: sosGlow 2s infinite;
 }
 
+/* Onboarding Cool Animations */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.animate-float {
+  animation: floatGentle 4s ease-in-out infinite;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+@keyframes spinReverseSlow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-reverse-slow {
+  animation: spinReverseSlow 25s linear infinite;
+}
+
+@keyframes ripplePulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-ripple-1 {
+  animation: ripplePulse 3s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.animate-ripple-2 {
+  animation: ripplePulse 3s cubic-bezier(0.2, 0.6, 0.3, 1) infinite 1s;
+}
+
+.animate-ripple-3 {
+  animation: ripplePulse 3s cubic-bezier(0.2, 0.6, 0.3, 1) infinite 2s;
+}
+
+@keyframes goldGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(245, 166, 35, 0.4), 0 0 20px rgba(245, 166, 35, 0.2);
+    filter: drop-shadow(0 0 6px rgba(245, 166, 35, 0.5));
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(245, 166, 35, 0.8), 0 0 35px rgba(245, 166, 35, 0.5), 0 0 50px rgba(245, 166, 35, 0.3);
+    filter: drop-shadow(0 0 14px rgba(245, 166, 35, 0.9));
+  }
+}
+
+.animate-gold-glow {
+  animation: goldGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes badgeShine {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  30%, 100% {
+    transform: translateX(150%) skewX(-25deg);
+  }
+}
+
+.animate-shine {
+  animation: badgeShine 3.5s ease-in-out infinite;
+}
+
 /* Phone Mockup Styling */
 .phone-mockup {
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #152747, 0 0 0 12px #203c6d;
