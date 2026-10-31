@@ -24,7 +24,7 @@ export default function RiwayatScreen({ onSelectReport }) {
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-[#070d1a] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col bg-[#1E3866] text-slate-100 select-none pb-4">
       
       <HeaderBar title="Riwayat Aktivitas" showBack={false} />
 
@@ -34,8 +34,8 @@ export default function RiwayatScreen({ onSelectReport }) {
           onClick={() => setFilter('all')}
           className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition ${
             filter === 'all'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-[#0f1f3d] text-slate-400 hover:text-white'
+              ? 'bg-[#F5A623] text-slate-900 shadow-md font-black'
+              : 'bg-[#162a4d] text-slate-300 hover:text-white'
           }`}
         >
           Semua ({historyList.length})
@@ -44,8 +44,8 @@ export default function RiwayatScreen({ onSelectReport }) {
           onClick={() => setFilter('sos')}
           className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition ${
             filter === 'sos'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-[#0f1f3d] text-slate-400 hover:text-white'
+              ? 'bg-[#F5A623] text-slate-900 shadow-md font-black'
+              : 'bg-[#162a4d] text-slate-300 hover:text-white'
           }`}
         >
           Darurat SOS
@@ -54,8 +54,8 @@ export default function RiwayatScreen({ onSelectReport }) {
           onClick={() => setFilter('konseling')}
           className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition ${
             filter === 'konseling'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'bg-[#0f1f3d] text-slate-400 hover:text-white'
+              ? 'bg-[#F5A623] text-slate-900 shadow-md font-black'
+              : 'bg-[#162a4d] text-slate-300 hover:text-white'
           }`}
         >
           Konseling
@@ -78,7 +78,7 @@ export default function RiwayatScreen({ onSelectReport }) {
               <div
                 key={item.id}
                 onClick={() => setSelectedItem(item)}
-                className="bg-[#0e1d3b] hover:bg-[#14264d] border border-blue-900/50 rounded-2xl p-4 transition cursor-pointer shadow-md active:scale-98"
+                className="bg-[#162a4d] hover:bg-[#1d3561] border border-[#2b4c85] rounded-2xl p-4 transition cursor-pointer shadow-md active:scale-98"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-2.5">
@@ -189,3 +189,4 @@ export default function RiwayatScreen({ onSelectReport }) {
     </div>
   );
 }
+

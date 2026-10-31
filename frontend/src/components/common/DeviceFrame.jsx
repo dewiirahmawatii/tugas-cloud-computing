@@ -1,5 +1,5 @@
 import React from 'react';
-import { Smartphone, Monitor, Volume2, VolumeX, Layers, ShieldCheck } from 'lucide-react';
+import { Smartphone, Monitor, Volume2, VolumeX, Layers } from 'lucide-react';
 
 export default function DeviceFrame({ 
   children, 
@@ -11,11 +11,11 @@ export default function DeviceFrame({
   onSetDeviceMode 
 }) {
   const screensList = [
-    { id: 'splash', label: '1. Splash Screen', group: 'Onboarding' },
-    { id: 'onboarding1', label: '2. Onboarding 1', group: 'Onboarding' },
-    { id: 'onboarding2', label: '3. Onboarding 2', group: 'Onboarding' },
-    { id: 'login', label: '4. Login Akun', group: 'Auth' },
-    { id: 'register', label: '5. Buat Akun Baru', group: 'Auth' },
+    { id: 'splash', label: '1. On Boarding 1 (Logo UTDI)', group: 'Onboarding' },
+    { id: 'onboarding2', label: '2. On Boarding 2 (Teks PPKPS)', group: 'Onboarding' },
+    { id: 'onboarding3', label: '3. On Boarding 3 (Logo PPKS + Teks)', group: 'Onboarding' },
+    { id: 'login', label: '4. Login (Masuk)', group: 'Auth' },
+    { id: 'register', label: '5. Buat Akun (Register)', group: 'Auth' },
     { id: 'home', label: '6. Beranda (Home)', group: 'Main' },
     { id: 'riwayat', label: '7. Riwayat Laporan', group: 'Main' },
     { id: 'profil', label: '8. Profil Mahasiswa', group: 'Main' },
@@ -32,26 +32,24 @@ export default function DeviceFrame({
   ];
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col items-center justify-start p-2 sm:p-6 select-none font-sans">
+    <div className="min-h-screen bg-[#152747] text-slate-100 flex flex-col items-center justify-start p-2 sm:p-6 select-none font-sans">
       
       {/* Top Controller Bar */}
-      <header className="w-full max-w-5xl mb-4 bg-[#0b162c]/90 border border-blue-900/40 backdrop-blur-md rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xl shadow-black/40">
+      <header className="w-full max-w-5xl mb-4 bg-[#1E3866] border border-[#2b4c85] backdrop-blur-md rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xl shadow-black/30">
         
         {/* Brand identity */}
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-500 p-0.5 flex items-center justify-center shadow-lg shadow-blue-600/30">
-            <div className="w-full h-full bg-[#0b162c] rounded-[10px] flex items-center justify-center">
-              <span className="text-sm font-black tracking-tight text-white">UTDI</span>
-            </div>
+          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-lg">
+            <img src="/assets/utdi-logo.png" alt="UTDI" className="w-full h-full object-contain" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base font-bold text-white tracking-wide">UTDI Mobile Care & SOS</h1>
-              <span className="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> Live
+              <h1 className="text-base font-bold text-white tracking-wide">SATGAS PPKPS • UTDI</h1>
+              <span className="text-[10px] bg-[#F5A623]/20 text-[#F5A623] border border-[#F5A623]/40 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F5A623] animate-ping"></span> Live
               </span>
             </div>
-            <p className="text-xs text-blue-300/70 font-medium">Figma Flow 1 Architecture • Digital - Global - Integrity</p>
+            <p className="text-xs text-blue-200/80 font-medium">Universitas Teknologi Digital Indonesia • Warna Resmi #1E3866</p>
           </div>
         </div>
 
@@ -60,13 +58,13 @@ export default function DeviceFrame({
           
           {/* Screen quick selector */}
           <div className="relative flex items-center">
-            <Layers className="w-4 h-4 text-blue-400 absolute left-2.5 pointer-events-none" />
+            <Layers className="w-4 h-4 text-blue-300 absolute left-2.5 pointer-events-none" />
             <select
               value={currentScreen}
               onChange={(e) => onNavigate(e.target.value)}
-              className="bg-[#122347] border border-blue-800/60 text-xs text-blue-100 rounded-xl pl-8 pr-4 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-[#182d5a] transition shadow-inner font-medium"
+              className="bg-[#162a4d] border border-blue-400/40 text-xs text-white rounded-xl pl-8 pr-4 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-[#F5A623] cursor-pointer hover:bg-[#1a335c] transition shadow-inner font-medium"
             >
-              <optgroup label="Alur Figma Flow 1:">
+              <optgroup label="Alur Layar:">
                 {screensList.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.label}
@@ -82,20 +80,20 @@ export default function DeviceFrame({
             title={soundEnabled ? "Nonaktifkan Efek Suara SOS" : "Aktifkan Efek Suara SOS"}
             className={`p-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition ${
               soundEnabled
-                ? 'bg-blue-600/20 border-blue-500/50 text-blue-300'
+                ? 'bg-[#F5A623]/20 border-[#F5A623]/50 text-[#F5A623]'
                 : 'bg-slate-800/50 border-slate-700 text-slate-400'
             }`}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4 text-blue-400" /> : <VolumeX className="w-4 h-4" />}
+            {soundEnabled ? <Volume2 className="w-4 h-4 text-[#F5A623]" /> : <VolumeX className="w-4 h-4" />}
             <span className="hidden sm:inline">{soundEnabled ? 'Audio Aktif' : 'Mute'}</span>
           </button>
 
           {/* Device Frame View Toggle */}
-          <div className="flex items-center bg-[#122347] p-1 rounded-xl border border-blue-900/50">
+          <div className="flex items-center bg-[#162a4d] p-1 rounded-xl border border-blue-400/30">
             <button
               onClick={() => onSetDeviceMode('iphone')}
               className={`p-1.5 rounded-lg text-xs transition ${
-                deviceMode === 'iphone' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                deviceMode === 'iphone' ? 'bg-[#1E3866] text-[#F5A623] border border-[#F5A623]/50 shadow' : 'text-slate-400 hover:text-white'
               }`}
               title="Tampilan iPhone Frame"
             >
@@ -104,7 +102,7 @@ export default function DeviceFrame({
             <button
               onClick={() => onSetDeviceMode('full')}
               className={`p-1.5 rounded-lg text-xs transition ${
-                deviceMode === 'full' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'
+                deviceMode === 'full' ? 'bg-[#1E3866] text-[#F5A623] border border-[#F5A623]/50 shadow' : 'text-slate-400 hover:text-white'
               }`}
               title="Tampilan Layar Penuh"
             >
@@ -117,16 +115,16 @@ export default function DeviceFrame({
       {/* Main Device Presentation Container */}
       <main className="w-full flex justify-center items-center flex-1 my-auto">
         {deviceMode === 'iphone' ? (
-          <div className="relative w-full max-w-[400px] h-[844px] bg-[#0b162c] border-[10px] border-[#1e293b] rounded-[52px] shadow-2xl shadow-blue-950/50 flex flex-col overflow-hidden ring-1 ring-white/10">
+          <div className="relative w-full max-w-[390px] h-[844px] bg-[#1E3866] border-[10px] border-[#0e1b33] rounded-[52px] shadow-2xl shadow-black/60 flex flex-col overflow-hidden ring-2 ring-white/10">
             
             {/* Dynamic Island / Notch */}
             <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 flex items-center justify-between px-2.5 shadow-md">
               <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700/60"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500/80 animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></div>
             </div>
 
-            {/* Mobile Screen Content */}
-            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#080e1c] relative pt-8 pb-4">
+            {/* Mobile Screen Content with Consistent #1E3866 Background */}
+            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#1E3866] relative pt-8 pb-4">
               {children}
             </div>
 
@@ -134,8 +132,8 @@ export default function DeviceFrame({
             <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/40 rounded-full z-50 pointer-events-none"></div>
           </div>
         ) : (
-          <div className="w-full max-w-md h-[860px] bg-[#080e1c] border border-blue-900/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
-            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col">
+          <div className="w-full max-w-md h-[860px] bg-[#1E3866] border border-[#2b4c85] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
+            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#1E3866]">
               {children}
             </div>
           </div>
@@ -143,8 +141,8 @@ export default function DeviceFrame({
       </main>
 
       {/* Footer disclaimer */}
-      <footer className="mt-4 text-center text-xs text-slate-500 max-w-md">
-        Aplikasi Layanan Keamanan & Konseling Terpadu Kampus UTDI • Universitas Teknologi Digital Indonesia (STMIK AKAKOM)
+      <footer className="mt-4 text-center text-xs text-blue-200/60 max-w-md">
+        Satgas PPKPS • Universitas Teknologi Digital Indonesia (STMIK AKAKOM)
       </footer>
 
     </div>

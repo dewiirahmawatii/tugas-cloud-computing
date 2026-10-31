@@ -8,15 +8,16 @@ export default {
     extend: {
       colors: {
         utdi: {
-          dark: '#080d1a',
-          navy: '#0b162c',
-          card: '#122347',
-          cardHover: '#182d5a',
-          accent: '#2563eb',
-          gold: '#f59e0b',
+          bg: '#1E3866',
+          dark: '#1E3866',
+          navy: '#1E3866',
+          card: '#182f57',
+          cardHover: '#234177',
+          border: '#2c4e8a',
+          gold: '#F5A623',
+          yellow: '#F5A623',
           sos: '#ef4444',
           sosHover: '#dc2626',
-          border: '#1e386a'
         }
       },
       animation: {

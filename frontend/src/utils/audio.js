@@ -130,3 +130,4 @@ export function playBeep(freq = 880, duration = 0.1) {
     osc.stop(ctx.currentTime + duration);
   } catch (e) {}
 }
+

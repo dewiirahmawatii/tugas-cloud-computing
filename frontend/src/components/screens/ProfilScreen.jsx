@@ -13,14 +13,14 @@ export default function ProfilScreen({
   const [soundAlert, setSoundAlert] = useState(true);
 
   return (
-    <div className="flex-1 flex flex-col bg-[#070d1a] text-slate-100 select-none pb-6">
+    <div className="flex-1 flex flex-col bg-[#1E3866] text-slate-100 select-none pb-6">
       
       <HeaderBar title="Profil Mahasiswa" showBack={false} />
 
       <div className="px-5 py-4 space-y-4 overflow-y-auto">
         
         {/* Student ID Card (Kartu Mahasiswa UTDI) */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#0c1c3c] via-[#122855] to-[#1e3e82] p-5 border border-blue-600/40 shadow-xl">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#162a4d] via-[#1a335c] to-[#25457d] p-5 border border-[#F5A623]/40 shadow-xl">
           
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3.5">
@@ -72,7 +72,7 @@ export default function ProfilScreen({
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 px-1">
             Pengaturan Akun & Keamanan
           </span>
-          <div className="bg-[#0e1d3b] border border-blue-900/50 rounded-2xl overflow-hidden shadow-md divide-y divide-blue-950">
+          <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl overflow-hidden shadow-md divide-y divide-[#223d6a]">
             
             {/* 1. Edit Profil ("Pe...") */}
             <div
@@ -133,7 +133,7 @@ export default function ProfilScreen({
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 px-1">
             Preferensi & Privasi Kampus
           </span>
-          <div className="bg-[#0e1d3b] border border-blue-900/50 rounded-2xl overflow-hidden shadow-md divide-y divide-blue-950">
+          <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl overflow-hidden shadow-md divide-y divide-[#223d6a]">
             
             {/* Suara Alarm SOS */}
             <div className="p-3.5 flex items-center justify-between">
@@ -188,3 +188,4 @@ export default function ProfilScreen({
     </div>
   );
 }
+

@@ -59,10 +59,10 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
   ];
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#070d1a] text-slate-100 select-none">
+    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none">
       
       {/* Custom Chat Header */}
-      <div className="bg-[#0b162c] border-b border-blue-900/50 px-4 py-2.5 flex items-center justify-between shadow-md z-30">
+      <div className="bg-[#162a4d] border-b border-[#2b4c85] px-4 py-2.5 flex items-center justify-between shadow-md z-30">
         
         <div className="flex items-center space-x-2.5">
           <button
@@ -185,3 +185,4 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
     </div>
   );
 }
+

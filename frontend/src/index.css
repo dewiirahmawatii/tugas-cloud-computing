@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#060a14] text-slate-100 overflow-x-hidden;
+    @apply bg-[#1E3866] text-slate-100 overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
@@ -15,27 +15,27 @@
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(11, 22, 44, 0.6);
+  background: #1E3866;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e386a;
+  background: #2c4e8a;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #3b82f6;
 }
 
 /* Mobile Frame Glassmorphism */
 .glass-panel {
-  background: rgba(18, 35, 71, 0.7);
+  background: rgba(30, 56, 102, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-sos {
-  background: radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(18,35,71,0.8) 100%);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: radial-gradient(circle, rgba(239,68,68,0.25) 0%, rgba(30,56,102,0.9) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 /* SOS Pulse Animation */
@@ -57,6 +57,6 @@
 
 /* Phone Mockup Styling */
 .phone-mockup {
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #152747, 0 0 0 12px #203c6d;
   border-radius: 46px;
 }

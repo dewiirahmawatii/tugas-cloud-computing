@@ -22,7 +22,7 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#070d1a] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none pb-4">
       
       <div>
         <HeaderBar title="Ubah Data Profil (Pe...)" showBack={true} onBack={onBack} />
@@ -125,3 +125,4 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
     </div>
   );
 }
+

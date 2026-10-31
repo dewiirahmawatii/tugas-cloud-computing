@@ -28,7 +28,7 @@ export default function VoiceCallScreen({ counselor, onEndCall, soundEnabled }) 
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between items-center text-center px-6 py-8 bg-gradient-to-b from-[#081022] via-[#0c1a38] to-[#050811] text-slate-100 select-none relative overflow-hidden">
+    <div className="flex-1 flex flex-col justify-between items-center text-center px-6 py-8 bg-[#1E3866] text-slate-100 select-none relative overflow-hidden">
       
       {/* Top Encryption Badge */}
       <div className="inline-flex items-center space-x-1.5 bg-blue-950/80 border border-blue-800/60 rounded-full px-3 py-1 text-[10px] text-blue-300">
@@ -121,3 +121,4 @@ export default function VoiceCallScreen({ counselor, onEndCall, soundEnabled }) 
     </div>
   );
 }
+

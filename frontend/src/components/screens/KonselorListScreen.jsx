@@ -24,7 +24,7 @@ export default function KonselorListScreen({ onBack, onSelectCounselor, onStartC
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-[#070d1a] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col bg-[#1E3866] text-slate-100 select-none pb-4">
       
       <HeaderBar title="Konsultasi Mahasiswa (kon...)" showBack={true} onBack={onBack} />
 
@@ -139,3 +139,4 @@ export default function KonselorListScreen({ onBack, onSelectCounselor, onStartC
     </div>
   );
 }
+

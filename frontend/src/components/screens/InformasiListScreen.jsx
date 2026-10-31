@@ -21,7 +21,7 @@ export default function InformasiListScreen({ onBack, onSelectArticle }) {
   );
 
   return (
-    <div className="flex-1 flex flex-col bg-[#070d1a] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col bg-[#1E3866] text-slate-100 select-none pb-4">
       
       <HeaderBar title="Panduan & Edukasi (Inf...)" showBack={true} onBack={onBack} />
 
@@ -100,3 +100,4 @@ export default function InformasiListScreen({ onBack, onSelectArticle }) {
     </div>
   );
 }
+

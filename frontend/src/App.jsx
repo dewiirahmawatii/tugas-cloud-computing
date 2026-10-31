@@ -103,7 +103,7 @@ export default function App() {
 
   const handleResolveSos = () => {
     stopSosSiren();
-    setSuccessMessage("Laporan sinyal darurat telah diselesaikan oleh petugas pos keamanan UTDI.");
+    setSuccessMessage("Laporan sinyal darurat telah diselesaikan oleh Satgas & petugas pos keamanan UTDI.");
     setActiveSosReport(null);
     setCurrentScreen('riwayat');
   };
@@ -133,29 +133,32 @@ export default function App() {
       onSetDeviceMode={setDeviceMode}
     >
       {/* Dynamic Screen View */}
-      <div className="flex-1 flex flex-col min-h-full">
+      <div className="flex-1 flex flex-col min-h-full bg-[#1E3866]">
+        
+        {/* Screen 1: On Boarding 1 (Logo UTDI) */}
         {currentScreen === 'splash' && (
           <SplashScreen
-            onStart={() => navigateTo('onboarding1')}
+            onStart={() => navigateTo('onboarding2')}
           />
         )}
 
-        {currentScreen === 'onboarding1' && (
-          <OnboardingScreen
-            initialStep={1}
-            onComplete={() => navigateTo('login')}
-            onSkip={() => navigateTo('login')}
-          />
-        )}
-
+        {/* Screen 2: On Boarding 2 (Teks SATGAS PPKPS) */}
         {currentScreen === 'onboarding2' && (
           <OnboardingScreen
             initialStep={2}
-            onComplete={() => navigateTo('login')}
-            onSkip={() => navigateTo('login')}
+            onNextStep={() => navigateTo('onboarding3')}
           />
         )}
 
+        {/* Screen 3: On Boarding 3 (Logo Satgas PPKS + Teks SATGAS PPKPS) */}
+        {currentScreen === 'onboarding3' && (
+          <OnboardingScreen
+            initialStep={3}
+            onComplete={() => navigateTo('login')}
+          />
+        )}
+
+        {/* Screen 4: Login ("Masuk") */}
         {currentScreen === 'login' && (
           <LoginScreen
             onLoginSuccess={() => navigateTo('home')}
@@ -163,16 +166,18 @@ export default function App() {
           />
         )}
 
+        {/* Screen 5: Register ("Buat Akun") */}
         {currentScreen === 'register' && (
           <RegisterScreen
             onRegisterSuccess={() => {
-              setSuccessMessage("Akun mahasiswa berhasil didaftarkan! Silakan gunakan akun untuk login.");
+              setSuccessMessage("Akun mahasiswa berhasil didaftarkan! Silakan masuk.");
               navigateTo('login');
             }}
             onBackToLogin={() => navigateTo('login')}
           />
         )}
 
+        {/* Screen 6: Home */}
         {currentScreen === 'home' && (
           <HomeScreen
             user={user}
@@ -182,6 +187,7 @@ export default function App() {
           />
         )}
 
+        {/* Screen 7: Riwayat */}
         {currentScreen === 'riwayat' && (
           <RiwayatScreen
             onSelectReport={(report) => {
@@ -190,6 +196,7 @@ export default function App() {
           />
         )}
 
+        {/* Screen 8: Profil */}
         {currentScreen === 'profil' && (
           <ProfilScreen
             user={user}
@@ -309,7 +316,7 @@ export default function App() {
         />
       )}
 
-      {/* Confirmation & Success Modal ("acc...") */}
+      {/* Confirmation & Success Modal */}
       <SuccessModal
         message={successMessage}
         onClose={() => setSuccessMessage(null)}
