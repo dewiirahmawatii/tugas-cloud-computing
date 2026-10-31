@@ -170,7 +170,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   const currentSatgas = satgasDirectory[activeRoom];
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-white select-none relative">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-white select-none overflow-hidden relative">
       
       {/* Top Floating Toast: ANDA MENGAKSES SECARA ANONIM */}
       {showAnonimToast && activeRoom === 'chatbot' && (
@@ -193,7 +193,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       )}
 
       {/* Header Bar: (←) Konsultasi / Curhat */}
-      <div className="px-5 pt-10 pb-3 flex items-center justify-between border-b border-[#2b4c85] bg-[#1E3866] z-30">
+      <div className="px-5 pt-3 pb-3 flex items-center justify-between border-b border-[#2b4c85] bg-[#1E3866] z-30 shrink-0">
         <div className="flex items-center space-x-3">
           <button
             onClick={handleHeaderBack}
@@ -220,7 +220,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
 
       {/* Sub-Header: Chat Bot vs Satgas Identity */}
       {activeRoom === 'chatbot' ? (
-        <div className="px-5 py-3 flex items-center space-x-3 border-b border-[#25457d] bg-[#1A325C]">
+        <div className="px-5 py-3 flex items-center space-x-3 border-b border-[#25457d] bg-[#1A325C] shrink-0">
           <div className="w-11 h-11 rounded-full bg-[#F5A623] flex items-center justify-center text-slate-900 shadow-md shrink-0">
             <Bot className="w-7 h-7 text-slate-900 stroke-[2.2]" />
           </div>
@@ -237,7 +237,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
           </div>
         </div>
       ) : (
-        <div className="px-5 py-2.5 flex items-center justify-between border-b border-[#25457d] bg-[#1A325C]">
+        <div className="px-5 py-2.5 flex items-center justify-between border-b border-[#25457d] bg-[#1A325C] shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center shrink-0 shadow">
               <img src="/assets/satgas-ppks.jpg" alt="Satgas" className="w-full h-full object-contain rounded-full" />
@@ -270,7 +270,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       )}
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 space-y-3.5 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-3.5 overflow-y-auto min-h-0">
         {currentMessages.map((m) => {
           const isUser = m.sender === 'user';
 
@@ -329,7 +329,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
 
       {/* Quick Suggestion Chips (if in chatbot room) */}
       {activeRoom === 'chatbot' && (
-        <div className="px-4 py-1.5 bg-[#162a4d] flex space-x-2 overflow-x-auto border-t border-[#2b4c85] scrollbar-none">
+        <div className="px-4 py-1.5 bg-[#162a4d] flex space-x-2 overflow-x-auto border-t border-[#2b4c85] scrollbar-none shrink-0">
           <button
             onClick={() => handleSend("Saya ingin curhat")}
             className="text-[11px] bg-[#F5A623] hover:bg-amber-400 text-slate-950 font-bold px-3 py-1 rounded-full whitespace-nowrap shadow transition active:scale-95"
@@ -346,7 +346,7 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       )}
 
       {/* Bottom Input Bar */}
-      <div className="p-3 bg-[#162a4d] border-t border-[#2b4c85] flex items-center space-x-2">
+      <div className="p-3 bg-[#162a4d] border-t border-[#2b4c85] flex items-center space-x-2 shrink-0">
         <input
           type="text"
           value={inputText}

@@ -18,9 +18,10 @@ export default function LiveSosTrackingScreen({ report, onCancel, onResolve }) {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-slate-100 select-none overflow-hidden">
       
-      <div>
+      {/* Pinned Top Header */}
+      <div className="shrink-0">
         <HeaderBar 
           title="Tracking Sinyal Darurat (Dar...)" 
           showBack={false}
@@ -30,6 +31,10 @@ export default function LiveSosTrackingScreen({ report, onCancel, onResolve }) {
             </span>
           }
         />
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto min-h-0 pb-6">
 
         {/* Live Animated Map Container */}
         <div className="relative w-full h-56 bg-[#0a1429] overflow-hidden border-b border-blue-900/60 shadow-xl">

@@ -24,48 +24,51 @@ export default function KonselorListScreen({ onBack, onSelectCounselor, onStartC
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-[#1E3866] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-slate-100 select-none overflow-hidden">
       
-      <HeaderBar title="Konsultasi Mahasiswa (kon...)" showBack={true} onBack={onBack} />
+      {/* Pinned Top Bar and Controls */}
+      <div className="shrink-0">
+        <HeaderBar title="Konsultasi Mahasiswa (kon...)" showBack={true} onBack={onBack} />
 
-      {/* Search Input */}
-      <div className="px-5 pt-3 pb-2">
-        <div className="relative flex items-center">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari konselor psikologi, PPKS, karir..."
-            className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
+        {/* Search Input */}
+        <div className="px-5 pt-3 pb-2">
+          <div className="relative flex items-center">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari konselor psikologi, PPKS, karir..."
+              className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Filter Chips */}
+        <div className="px-5 py-2 flex space-x-1.5 overflow-x-auto scrollbar-none">
+          {[
+            { id: 'all', label: 'Semua Konselor' },
+            { id: 'bk', label: 'Psikolog & BK' },
+            { id: 'ppks', label: 'Satgas PPKS' },
+            { id: 'akademik', label: 'Dosen Karir & IT' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setFilter(tab.id)}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition ${
+                filter === tab.id
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'bg-[#0f1f3d] text-slate-400 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Filter Chips */}
-      <div className="px-5 py-2 flex space-x-1.5 overflow-x-auto scrollbar-none">
-        {[
-          { id: 'all', label: 'Semua Konselor' },
-          { id: 'bk', label: 'Psikolog & BK' },
-          { id: 'ppks', label: 'Satgas PPKS' },
-          { id: 'akademik', label: 'Dosen Karir & IT' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setFilter(tab.id)}
-            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition ${
-              filter === tab.id
-                ? 'bg-blue-600 text-white shadow'
-                : 'bg-[#0f1f3d] text-slate-400 hover:text-white'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Counselors List */}
-      <div className="px-5 py-3 space-y-3 flex-1 overflow-y-auto">
+      {/* Counselors List (Scrollable, BottomNav stays pinned!) */}
+      <div className="px-5 py-3 space-y-3 flex-1 overflow-y-auto min-h-0 pb-6">
         {filtered.map((c) => (
           <div
             key={c.id}

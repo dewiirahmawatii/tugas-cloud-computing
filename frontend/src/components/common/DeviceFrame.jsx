@@ -36,7 +36,7 @@ export default function DeviceFrame({
     <div className="min-h-screen bg-[#152747] text-slate-100 flex flex-col items-center justify-start p-2 sm:p-6 select-none font-sans">
       
       {/* Top Controller Bar */}
-      <header className="w-full max-w-5xl mb-4 bg-[#1E3866] border border-[#2b4c85] backdrop-blur-md rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xl shadow-black/30">
+      <header className="w-full max-w-5xl mb-4 bg-[#1E3866] border border-[#2b4c85] backdrop-blur-md rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xl shadow-black/30 shrink-0">
         
         {/* Brand identity */}
         <div className="flex items-center space-x-3">
@@ -118,23 +118,23 @@ export default function DeviceFrame({
         {deviceMode === 'iphone' ? (
           <div className="relative w-full max-w-[390px] h-[844px] bg-[#1E3866] border-[10px] border-[#0e1b33] rounded-[52px] shadow-2xl shadow-black/60 flex flex-col overflow-hidden ring-2 ring-white/10">
             
-            {/* Dynamic Island / Notch */}
-            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 flex items-center justify-between px-2.5 shadow-md">
+            {/* Dynamic Island / Notch (Fixed at Top) */}
+            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 flex items-center justify-between px-2.5 shadow-md pointer-events-none">
               <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700/60"></div>
               <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></div>
             </div>
 
-            {/* Mobile Screen Content */}
-            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#1E3866] relative pt-8 pb-4">
+            {/* Mobile Viewport with Fixed Layout (Never scrolls the frame itself!) */}
+            <div className="w-full h-full flex flex-col bg-[#1E3866] relative pt-7 overflow-hidden">
               {children}
             </div>
 
-            {/* iOS Bottom Home Bar Indicator */}
-            <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/40 rounded-full z-50 pointer-events-none"></div>
+            {/* iOS Bottom Home Bar Indicator (Fixed at Bottom over navigation bar) */}
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/50 rounded-full z-50 pointer-events-none"></div>
           </div>
         ) : (
           <div className="w-full max-w-md h-[860px] bg-[#1E3866] border border-[#2b4c85] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative">
-            <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#1E3866]">
+            <div className="w-full h-full flex flex-col bg-[#1E3866] overflow-hidden">
               {children}
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function DeviceFrame({
       </main>
 
       {/* Footer disclaimer */}
-      <footer className="mt-4 text-center text-xs text-blue-200/60 max-w-md">
+      <footer className="mt-4 text-center text-xs text-blue-200/60 max-w-md shrink-0">
         Satgas PPKPS • Universitas Teknologi Digital Indonesia (STMIK AKAKOM)
       </footer>
 

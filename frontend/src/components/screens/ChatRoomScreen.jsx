@@ -59,10 +59,10 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
   ];
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-slate-100 select-none overflow-hidden">
       
-      {/* Custom Chat Header */}
-      <div className="bg-[#162a4d] border-b border-[#2b4c85] px-4 py-2.5 flex items-center justify-between shadow-md z-30">
+      {/* Custom Chat Header (Pinned Top) */}
+      <div className="bg-[#162a4d] border-b border-[#2b4c85] px-4 py-2.5 flex items-center justify-between shadow-md z-30 shrink-0">
         
         <div className="flex items-center space-x-2.5">
           <button
@@ -100,7 +100,7 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
       </div>
 
       {/* Chat Messages Body */}
-      <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-3 overflow-y-auto min-h-0">
         
         {/* Confidentiality Notice */}
         <div className="mx-auto max-w-[280px] bg-blue-950/40 border border-blue-800/40 rounded-xl p-2.5 text-center text-[10px] text-blue-300 flex items-center space-x-2">
@@ -143,7 +143,7 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
       </div>
 
       {/* Quick Suggestions Chips */}
-      <div className="px-3 py-1.5 bg-[#081022] flex space-x-1.5 overflow-x-auto border-t border-blue-950 scrollbar-none">
+      <div className="px-3 py-1.5 bg-[#081022] flex space-x-1.5 overflow-x-auto border-t border-blue-950 scrollbar-none shrink-0">
         {quickChips.map((chip, idx) => (
           <button
             key={idx}
@@ -156,7 +156,7 @@ export default function ChatRoomScreen({ counselor, onBack, onStartCall }) {
       </div>
 
       {/* Bottom Message Input Bar */}
-      <div className="p-3 bg-[#0a1428] border-t border-blue-900/50 flex items-center space-x-2">
+      <div className="p-3 bg-[#0a1428] border-t border-blue-900/50 flex items-center space-x-2 shrink-0">
         <button
           onClick={() => alert("Fitur lampirkan file & foto dokumen siap.")}
           className="text-slate-400 hover:text-blue-400 p-2 rounded-xl bg-[#101f3f]"

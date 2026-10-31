@@ -9,7 +9,7 @@ export default function BottomNav({ activeTab, onSelectTab }) {
   ];
 
   return (
-    <nav className="sticky bottom-0 left-0 right-0 w-full bg-[#162a4d] border-t border-[#2b4c85] px-6 py-2 z-40 flex items-center justify-around shadow-2xl">
+    <nav className="w-full bg-[#162a4d] border-t border-[#2b4c85] px-6 pt-2 pb-4 flex items-center justify-around shadow-2xl shrink-0 z-40 select-none">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
@@ -17,7 +17,7 @@ export default function BottomNav({ activeTab, onSelectTab }) {
           <button
             key={tab.id}
             onClick={() => onSelectTab(tab.id)}
-            className={`flex flex-col items-center justify-center py-1 px-4 transition-all duration-150 ${
+            className={`flex flex-col items-center justify-center py-0.5 px-4 transition-all duration-150 active:scale-95 ${
               isActive ? 'text-[#F5A623]' : 'text-slate-300 hover:text-white'
             }`}
           >

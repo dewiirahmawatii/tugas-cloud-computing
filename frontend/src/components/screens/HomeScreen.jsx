@@ -36,13 +36,18 @@ export default function HomeScreen({
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-white select-none px-5 pt-1 pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-white select-none overflow-hidden">
       
-      <div>
+      {/* Pinned Top Status / Header Bar */}
+      <div className="shrink-0 px-5 pt-1 pb-1">
         <HeaderBar transparent={true} />
+      </div>
+
+      {/* Scrollable Content (BottomNav stays pinned!) */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 px-5 pt-1 pb-6 space-y-4">
 
         {/* --- Top Header Card: Logo Satgas + SISTEM PENANGAN CEPAT --- */}
-        <div className="mt-3 bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-4 flex items-center space-x-3.5 shadow-lg">
+        <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-4 flex items-center space-x-3.5 shadow-lg">
           
           {/* Logo Satgas PPKS in White Circle */}
           <div className="w-13 h-13 rounded-full bg-white p-1 flex items-center justify-center shrink-0 shadow-md">

@@ -18,7 +18,7 @@ export default function LoginScreen({ onLoginSuccess, onGoToRegister }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between px-6 py-4 bg-[#1E3866] text-white select-none">
+    <div className="flex-1 flex flex-col justify-between h-full min-h-0 overflow-y-auto px-6 py-4 bg-[#1E3866] text-white select-none">
       
       <div>
         <HeaderBar transparent={true} />

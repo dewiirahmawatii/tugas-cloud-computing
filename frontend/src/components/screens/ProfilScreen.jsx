@@ -54,15 +54,15 @@ export default function ProfilScreen({
   );
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-white select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-white select-none pb-2 overflow-hidden">
       
       {/* ======================================================== */}
       {/* 1. VIEW: PROFIL (Main Profile Screen)                    */}
       {/* ======================================================== */}
       {view === 'main' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <div className="w-9 h-9 rounded-full bg-[#162a4d] border border-[#2b4c85] flex items-center justify-center text-blue-200">
               <ArrowLeft className="w-5 h-5 text-white" />
             </div>
@@ -71,7 +71,7 @@ export default function ProfilScreen({
             </h2>
           </div>
 
-          <div className="px-5 flex-1 overflow-y-auto">
+          <div className="px-5 flex-1 overflow-y-auto min-h-0 pb-6">
             <ProfileHeader />
 
             {/* Menu Options */}
@@ -118,9 +118,9 @@ export default function ProfilScreen({
       {/* 2. VIEW: PENGATURAN AKUN                                 */}
       {/* ======================================================== */}
       {view === 'pengaturan' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setView('main')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -132,7 +132,7 @@ export default function ProfilScreen({
             </h2>
           </div>
 
-          <div className="px-5 flex-1 overflow-y-auto">
+          <div className="px-5 flex-1 overflow-y-auto min-h-0 pb-6">
             <ProfileHeader />
 
             {/* Menu Options */}
@@ -179,9 +179,9 @@ export default function ProfilScreen({
       {/* 3. VIEW: GANTI SANDI                                     */}
       {/* ======================================================== */}
       {view === 'ganti-sandi' && (
-        <div className="flex-1 flex flex-col relative">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setView('pengaturan')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -193,7 +193,7 @@ export default function ProfilScreen({
             </h2>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto space-y-4">
+          <div className="px-5 py-4 flex-1 overflow-y-auto min-h-0 space-y-4 pb-6">
             
             {/* Input 1: Kata Sandi Saat Ini */}
             <div className="space-y-1.5">
@@ -344,9 +344,9 @@ export default function ProfilScreen({
       {/* 4. VIEW: PRIVASI DAN KEAMANAN                            */}
       {/* ======================================================== */}
       {view === 'privasi' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setView('main')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -358,7 +358,7 @@ export default function ProfilScreen({
             </h2>
           </div>
 
-          <div className="px-5 flex-1 overflow-y-auto">
+          <div className="px-5 flex-1 overflow-y-auto min-h-0 pb-6">
             <ProfileHeader />
 
             {/* Privacy Card with 3 Checkboxes */}

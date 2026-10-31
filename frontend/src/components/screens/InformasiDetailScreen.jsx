@@ -32,9 +32,10 @@ Universitas Teknologi Digital Indonesia telah menerapkan standar keselamatan ged
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-slate-100 select-none overflow-hidden">
       
-      <div>
+      {/* Pinned Top Header */}
+      <div className="shrink-0">
         <HeaderBar
           title="Rincian Panduan"
           showBack={true}
@@ -50,6 +51,10 @@ Universitas Teknologi Digital Indonesia telah menerapkan standar keselamatan ged
             </div>
           }
         />
+      </div>
+
+      {/* Scrollable Body */}
+      <div className="flex-1 overflow-y-auto min-h-0 pb-4">
 
         {/* Hero image */}
         <div className="w-full h-44 overflow-hidden relative">
@@ -106,8 +111,8 @@ Universitas Teknologi Digital Indonesia telah menerapkan standar keselamatan ged
         </div>
       </div>
 
-      {/* Direct Emergency Call Button */}
-      <div className="px-5 pt-3">
+      {/* Direct Emergency Call Button (Pinned) */}
+      <div className="px-5 pt-2 pb-3 shrink-0">
         <button
           onClick={onOpenEmergency}
           className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-red-950/50 transition"

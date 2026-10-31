@@ -39,10 +39,10 @@ export default function RiwayatScreen({ onBack, onSelectReport }) {
   ];
 
   return (
-    <div className="flex-1 flex flex-col bg-[#1E3866] text-white select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-white select-none overflow-hidden">
       
       {/* Top Header with Back Arrow and Golden Yellow Title */}
-      <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+      <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
         <button
           onClick={onBack}
           className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -55,7 +55,7 @@ export default function RiwayatScreen({ onBack, onSelectReport }) {
       </div>
 
       {/* List of Report Cards */}
-      <div className="px-5 py-4 space-y-4 flex-1 overflow-y-auto">
+      <div className="px-5 py-4 space-y-4 flex-1 overflow-y-auto min-h-0 pb-6">
         {reports.map((item) => (
           <div
             key={item.id}

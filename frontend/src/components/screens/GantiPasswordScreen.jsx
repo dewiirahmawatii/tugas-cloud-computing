@@ -23,10 +23,15 @@ export default function GantiPasswordScreen({ onBack, onSaveSuccess }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-slate-100 select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-slate-100 select-none overflow-hidden">
       
-      <div>
+      {/* Pinned Top Header */}
+      <div className="shrink-0">
         <HeaderBar title="Ganti Kata Sandi (ga...)" showBack={true} onBack={onBack} />
+      </div>
+
+      {/* Scrollable Body */}
+      <div className="flex-1 overflow-y-auto min-h-0 pb-6">
 
         <div className="px-5 py-4">
           <div className="bg-[#0f1f3d] border border-blue-900/50 rounded-2xl p-4 mb-4 flex items-center space-x-3">

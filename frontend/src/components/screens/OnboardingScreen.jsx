@@ -38,7 +38,7 @@ export default function OnboardingScreen({ initialStep = 2, onComplete, onNextSt
   return (
     <div 
       onClick={handleClick}
-      className="flex-1 flex flex-col justify-between items-center text-center px-6 py-6 bg-[#1E3866] text-white relative select-none cursor-pointer transition-colors overflow-hidden"
+      className="flex-1 flex flex-col justify-between items-center text-center px-6 py-6 h-full min-h-0 bg-[#1E3866] text-white relative select-none cursor-pointer transition-colors overflow-hidden"
     >
       <HeaderBar transparent={true} />
 

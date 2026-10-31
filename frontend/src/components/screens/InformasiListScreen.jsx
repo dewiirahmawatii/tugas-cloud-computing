@@ -5,15 +5,15 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
   const [currentView, setCurrentView] = useState('list'); // 'list', 'profil-satgas', 'hindari-sendiri', 'simpan-darurat', 'undang-undang'
 
   return (
-    <div className="flex-1 flex flex-col justify-between bg-[#1E3866] text-white select-none pb-4">
+    <div className="flex-1 flex flex-col h-full min-h-0 bg-[#1E3866] text-white select-none overflow-hidden">
       
       {/* ======================================================== */}
       {/* 1. MAIN INFORMASI MENU (Informasi)                       */}
       {/* ======================================================== */}
       {currentView === 'list' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={onBack}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -26,7 +26,7 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
           </div>
 
           {/* 4 Information Menu Cards */}
-          <div className="px-5 py-4 space-y-3.5 flex-1 overflow-y-auto">
+          <div className="px-5 py-4 space-y-3.5 flex-1 overflow-y-auto min-h-0 pb-6">
             
             {/* Card 1: PROFIL SATGAS */}
             <div
@@ -97,9 +97,9 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
       {/* 2. DETAIL: PROFIL SATGAS (Informasi 3)                   */}
       {/* ======================================================== */}
       {currentView === 'profil-satgas' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setCurrentView('list')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -111,7 +111,7 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
             </h2>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto space-y-4">
+          <div className="px-5 py-4 flex-1 overflow-y-auto min-h-0 space-y-4 pb-6">
             
             {/* Card Content */}
             <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-5 text-center shadow-lg">
@@ -153,9 +153,9 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
       {/* 3. DETAIL: Hindari Berjalan Sendiri (Informasi 4)         */}
       {/* ======================================================== */}
       {currentView === 'hindari-sendiri' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setCurrentView('list')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -167,7 +167,7 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
             </h2>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto">
+          <div className="px-5 py-4 flex-1 overflow-y-auto min-h-0 pb-6">
             <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-5 shadow-lg">
               <h3 className="text-sm font-black text-white mb-3">
                 Hindari Berjalan Sendiri
@@ -184,9 +184,9 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
       {/* 4. DETAIL: Simpan Nomor Darurat (Informasi 5)             */}
       {/* ======================================================== */}
       {currentView === 'simpan-darurat' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setCurrentView('list')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
@@ -198,7 +198,7 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
             </h2>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto space-y-4">
+          <div className="px-5 py-4 flex-1 overflow-y-auto min-h-0 space-y-4 pb-6">
             <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-5 shadow-lg">
               <h3 className="text-sm font-black text-white mb-3">
                 Simpan Nomor Darurat
@@ -224,9 +224,9 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
       {/* 5. DETAIL: Undang-Undang... (Informasi 2)                */}
       {/* ======================================================== */}
       {currentView === 'undang-undang' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85]">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
             <button
               onClick={() => setCurrentView('list')}
               className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95 shrink-0"
@@ -238,7 +238,7 @@ export default function InformasiListScreen({ onBack, onNavigateEmergency }) {
             </h2>
           </div>
 
-          <div className="px-5 py-4 flex-1 overflow-y-auto space-y-3.5">
+          <div className="px-5 py-4 flex-1 overflow-y-auto min-h-0 space-y-3.5 pb-6">
             
             {/* Section 1: Seksual */}
             <div className="bg-[#162a4d] border border-[#2b4c85] rounded-2xl p-4 shadow-md">

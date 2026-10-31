@@ -128,7 +128,12 @@ export default function App() {
     'pengaturan-akun', 
     'ganti-sandi', 
     'privasi-keamanan',
-    'konsultasi'
+    'konsultasi',
+    'informasi-list',
+    'informasi-detail',
+    'nomor-darurat',
+    'konselor-list',
+    'chat-room'
   ].includes(currentScreen);
 
   return (
@@ -143,239 +148,246 @@ export default function App() {
       deviceMode={deviceMode}
       onSetDeviceMode={setDeviceMode}
     >
-      {/* Dynamic Screen View */}
-      <div className="flex-1 flex flex-col min-h-full bg-[#1E3866]">
+      {/* App Shell: Fixed Layout Container */}
+      <div className="flex-1 flex flex-col h-full min-h-0 w-full overflow-hidden relative bg-[#1E3866]">
         
-        {/* Screen 1: On Boarding 1 (Logo UTDI) */}
-        {currentScreen === 'splash' && (
-          <SplashScreen
-            onStart={() => navigateTo('onboarding2')}
-          />
+        {/* Dynamic Screen View (Constrained to available height between top and bottom nav) */}
+        <div className="flex-1 flex flex-col h-full min-h-0 w-full overflow-hidden relative">
+          
+          {/* Screen 1: On Boarding 1 (Logo UTDI) */}
+          {currentScreen === 'splash' && (
+            <SplashScreen
+              onStart={() => navigateTo('onboarding2')}
+            />
+          )}
+
+          {/* Screen 2: On Boarding 2 (Teks SATGAS PPKPS) */}
+          {currentScreen === 'onboarding2' && (
+            <OnboardingScreen
+              initialStep={2}
+              onNextStep={() => navigateTo('onboarding3')}
+            />
+          )}
+
+          {/* Screen 3: On Boarding 3 (Logo Satgas PPKS + Teks SATGAS PPKPS) */}
+          {currentScreen === 'onboarding3' && (
+            <OnboardingScreen
+              initialStep={3}
+              onComplete={() => navigateTo('login')}
+            />
+          )}
+
+          {/* Screen 4: Login ("Masuk") */}
+          {currentScreen === 'login' && (
+            <LoginScreen
+              onLoginSuccess={() => navigateTo('home')}
+              onGoToRegister={() => navigateTo('register')}
+            />
+          )}
+
+          {/* Screen 5: Register ("Buat Akun") */}
+          {currentScreen === 'register' && (
+            <RegisterScreen
+              onRegisterSuccess={() => {
+                setSuccessMessage("Akun mahasiswa berhasil didaftarkan! Silakan masuk.");
+                navigateTo('login');
+              }}
+              onBackToLogin={() => navigateTo('login')}
+            />
+          )}
+
+          {/* Screen 6: Home */}
+          {currentScreen === 'home' && (
+            <HomeScreen
+              user={user}
+              onNavigate={navigateTo}
+              onTriggerSos={handleTriggerSos}
+              soundEnabled={soundEnabled}
+            />
+          )}
+
+          {/* Screen 7: Riwayat Pelaporan */}
+          {currentScreen === 'riwayat' && (
+            <RiwayatScreen
+              onBack={() => navigateTo('home')}
+              onSelectReport={(report) => {
+                setActiveSosReport(report);
+              }}
+            />
+          )}
+
+          {/* Screen 8: Profil (Dewi - Main) */}
+          {currentScreen === 'profil' && (
+            <ProfilScreen
+              user={user}
+              initialView="main"
+              onLogout={() => {
+                stopSosSiren();
+                navigateTo('login');
+              }}
+            />
+          )}
+
+          {/* Screen 9: Pengaturan Akun */}
+          {currentScreen === 'pengaturan-akun' && (
+            <ProfilScreen
+              user={user}
+              initialView="pengaturan"
+              onLogout={() => {
+                stopSosSiren();
+                navigateTo('login');
+              }}
+            />
+          )}
+
+          {/* Screen 10: Ubah Kata Sandi (ganti sandi) */}
+          {currentScreen === 'ganti-sandi' && (
+            <ProfilScreen
+              user={user}
+              initialView="ganti-sandi"
+              onLogout={() => {
+                stopSosSiren();
+                navigateTo('login');
+              }}
+            />
+          )}
+
+          {/* Screen 11: Privasi dan Keamanan */}
+          {currentScreen === 'privasi-keamanan' && (
+            <ProfilScreen
+              user={user}
+              initialView="privasi"
+              onLogout={() => {
+                stopSosSiren();
+                navigateTo('login');
+              }}
+            />
+          )}
+
+          {/* Legacy Profile Sub-screens */}
+          {currentScreen === 'edit-profil' && (
+            <EditProfilScreen
+              user={user}
+              onBack={() => navigateTo('profil')}
+              onSaveSuccess={(msg) => {
+                setSuccessMessage(msg);
+                navigateTo('profil');
+              }}
+            />
+          )}
+
+          {currentScreen === 'ganti-password' && (
+            <GantiPasswordScreen
+              onBack={() => navigateTo('profil')}
+              onSaveSuccess={(msg) => {
+                setSuccessMessage(msg);
+                navigateTo('profil');
+              }}
+            />
+          )}
+
+          {currentScreen === 'kontak-darurat' && (
+            <KontakDaruratScreen
+              user={user}
+              onBack={() => navigateTo('profil')}
+              onSaveSuccess={(msg) => {
+                setSuccessMessage(msg);
+              }}
+            />
+          )}
+
+          {/* Screen 12: Konsultasi / Curhat (Chat Bot) */}
+          {currentScreen === 'konsultasi' && (
+            <KonsultasiScreen
+              onBack={() => navigateTo('home')}
+              onStartVoiceCall={(satgas) => {
+                setSelectedCounselor({
+                  name: satgas.name,
+                  title: satgas.role,
+                  avatar: '/assets/satgas-ppks.jpg'
+                });
+                navigateTo('voice-call');
+              }}
+            />
+          )}
+
+          {/* Features Sub-screens */}
+          {currentScreen === 'nomor-darurat' && (
+            <NomorDaruratScreen
+              onBack={() => navigateTo('home')}
+            />
+          )}
+
+          {currentScreen === 'lapor-darurat' && (
+            <LaporDaruratScreen
+              onBack={() => navigateTo('home')}
+              onSubmitSos={handleTriggerSos}
+            />
+          )}
+
+          {currentScreen === 'live-sos' && (
+            <LiveSosTrackingScreen
+              report={activeSosReport}
+              onCancel={handleCancelSos}
+              onResolve={handleResolveSos}
+            />
+          )}
+
+          {currentScreen === 'konselor-list' && (
+            <KonselorListScreen
+              onBack={() => navigateTo('home')}
+              onSelectCounselor={(c) => {
+                setSelectedCounselor(c);
+                navigateTo('chat-room');
+              }}
+              onStartCall={handleStartCall}
+            />
+          )}
+
+          {currentScreen === 'chat-room' && (
+            <ChatRoomScreen
+              counselor={selectedCounselor}
+              onBack={() => navigateTo('konselor-list')}
+              onStartCall={handleStartCall}
+            />
+          )}
+
+          {currentScreen === 'voice-call' && (
+            <VoiceCallScreen
+              counselor={selectedCounselor}
+              onEndCall={handleEndCall}
+              soundEnabled={soundEnabled}
+            />
+          )}
+
+          {/* Screen 18: Panduan & Edukasi (Informasi) */}
+          {currentScreen === 'informasi-list' && (
+            <InformasiListScreen
+              onBack={() => navigateTo('home')}
+              onNavigateEmergency={() => navigateTo('nomor-darurat')}
+            />
+          )}
+
+          {currentScreen === 'informasi-detail' && (
+            <InformasiDetailScreen
+              article={selectedArticle}
+              onBack={() => navigateTo('informasi-list')}
+              onOpenEmergency={() => navigateTo('lapor-darurat')}
+            />
+          )}
+        </div>
+
+        {/* Permanently Pinned Bottom Navigation Bar (Never scrolls with content!) */}
+        {showBottomNav && (
+          <div className="shrink-0 z-40 w-full">
+            <BottomNav
+              activeTab={activeTab}
+              onSelectTab={handleTabChange}
+            />
+          </div>
         )}
 
-        {/* Screen 2: On Boarding 2 (Teks SATGAS PPKPS) */}
-        {currentScreen === 'onboarding2' && (
-          <OnboardingScreen
-            initialStep={2}
-            onNextStep={() => navigateTo('onboarding3')}
-          />
-        )}
-
-        {/* Screen 3: On Boarding 3 (Logo Satgas PPKS + Teks SATGAS PPKPS) */}
-        {currentScreen === 'onboarding3' && (
-          <OnboardingScreen
-            initialStep={3}
-            onComplete={() => navigateTo('login')}
-          />
-        )}
-
-        {/* Screen 4: Login ("Masuk") */}
-        {currentScreen === 'login' && (
-          <LoginScreen
-            onLoginSuccess={() => navigateTo('home')}
-            onGoToRegister={() => navigateTo('register')}
-          />
-        )}
-
-        {/* Screen 5: Register ("Buat Akun") */}
-        {currentScreen === 'register' && (
-          <RegisterScreen
-            onRegisterSuccess={() => {
-              setSuccessMessage("Akun mahasiswa berhasil didaftarkan! Silakan masuk.");
-              navigateTo('login');
-            }}
-            onBackToLogin={() => navigateTo('login')}
-          />
-        )}
-
-        {/* Screen 6: Home */}
-        {currentScreen === 'home' && (
-          <HomeScreen
-            user={user}
-            onNavigate={navigateTo}
-            onTriggerSos={handleTriggerSos}
-            soundEnabled={soundEnabled}
-          />
-        )}
-
-        {/* Screen 7: Riwayat Pelaporan */}
-        {currentScreen === 'riwayat' && (
-          <RiwayatScreen
-            onBack={() => navigateTo('home')}
-            onSelectReport={(report) => {
-              setActiveSosReport(report);
-            }}
-          />
-        )}
-
-        {/* Screen 8: Profil (Dewi - Main) */}
-        {currentScreen === 'profil' && (
-          <ProfilScreen
-            user={user}
-            initialView="main"
-            onLogout={() => {
-              stopSosSiren();
-              navigateTo('login');
-            }}
-          />
-        )}
-
-        {/* Screen 9: Pengaturan Akun */}
-        {currentScreen === 'pengaturan-akun' && (
-          <ProfilScreen
-            user={user}
-            initialView="pengaturan"
-            onLogout={() => {
-              stopSosSiren();
-              navigateTo('login');
-            }}
-          />
-        )}
-
-        {/* Screen 10: Ubah Kata Sandi (ganti sandi) */}
-        {currentScreen === 'ganti-sandi' && (
-          <ProfilScreen
-            user={user}
-            initialView="ganti-sandi"
-            onLogout={() => {
-              stopSosSiren();
-              navigateTo('login');
-            }}
-          />
-        )}
-
-        {/* Screen 11: Privasi dan Keamanan */}
-        {currentScreen === 'privasi-keamanan' && (
-          <ProfilScreen
-            user={user}
-            initialView="privasi"
-            onLogout={() => {
-              stopSosSiren();
-              navigateTo('login');
-            }}
-          />
-        )}
-
-        {/* Legacy Profile Sub-screens */}
-        {currentScreen === 'edit-profil' && (
-          <EditProfilScreen
-            user={user}
-            onBack={() => navigateTo('profil')}
-            onSaveSuccess={(msg) => {
-              setSuccessMessage(msg);
-              navigateTo('profil');
-            }}
-          />
-        )}
-
-        {currentScreen === 'ganti-password' && (
-          <GantiPasswordScreen
-            onBack={() => navigateTo('profil')}
-            onSaveSuccess={(msg) => {
-              setSuccessMessage(msg);
-              navigateTo('profil');
-            }}
-          />
-        )}
-
-        {currentScreen === 'kontak-darurat' && (
-          <KontakDaruratScreen
-            user={user}
-            onBack={() => navigateTo('profil')}
-            onSaveSuccess={(msg) => {
-              setSuccessMessage(msg);
-            }}
-          />
-        )}
-
-        {/* Screen 12: Konsultasi / Curhat (Chat Bot) */}
-        {currentScreen === 'konsultasi' && (
-          <KonsultasiScreen
-            onBack={() => navigateTo('home')}
-            onStartVoiceCall={(satgas) => {
-              setSelectedCounselor({
-                name: satgas.name,
-                title: satgas.role,
-                avatar: '/assets/satgas-ppks.jpg'
-              });
-              navigateTo('voice-call');
-            }}
-          />
-        )}
-
-        {/* Features Sub-screens */}
-        {currentScreen === 'nomor-darurat' && (
-          <NomorDaruratScreen
-            onBack={() => navigateTo('home')}
-          />
-        )}
-
-        {currentScreen === 'lapor-darurat' && (
-          <LaporDaruratScreen
-            onBack={() => navigateTo('home')}
-            onSubmitSos={handleTriggerSos}
-          />
-        )}
-
-        {currentScreen === 'live-sos' && (
-          <LiveSosTrackingScreen
-            report={activeSosReport}
-            onCancel={handleCancelSos}
-            onResolve={handleResolveSos}
-          />
-        )}
-
-        {currentScreen === 'konselor-list' && (
-          <KonselorListScreen
-            onBack={() => navigateTo('home')}
-            onSelectCounselor={(c) => {
-              setSelectedCounselor(c);
-              navigateTo('chat-room');
-            }}
-            onStartCall={handleStartCall}
-          />
-        )}
-
-        {currentScreen === 'chat-room' && (
-          <ChatRoomScreen
-            counselor={selectedCounselor}
-            onBack={() => navigateTo('konselor-list')}
-            onStartCall={handleStartCall}
-          />
-        )}
-
-        {currentScreen === 'voice-call' && (
-          <VoiceCallScreen
-            counselor={selectedCounselor}
-            onEndCall={handleEndCall}
-            soundEnabled={soundEnabled}
-          />
-        )}
-
-        {/* Screen 18: Panduan & Edukasi (Informasi) */}
-        {currentScreen === 'informasi-list' && (
-          <InformasiListScreen
-            onBack={() => navigateTo('home')}
-            onNavigateEmergency={() => navigateTo('nomor-darurat')}
-          />
-        )}
-
-        {currentScreen === 'informasi-detail' && (
-          <InformasiDetailScreen
-            article={selectedArticle}
-            onBack={() => navigateTo('informasi-list')}
-            onOpenEmergency={() => navigateTo('lapor-darurat')}
-          />
-        )}
       </div>
-
-      {/* Main Bottom Navigation Bar */}
-      {showBottomNav && (
-        <BottomNav
-          activeTab={activeTab}
-          onSelectTab={handleTabChange}
-        />
-      )}
 
       {/* Confirmation & Success Modal */}
       <SuccessModal
