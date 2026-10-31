@@ -352,13 +352,11 @@ export default function App() {
           />
         )}
 
+        {/* Screen 18: Panduan & Edukasi (Informasi) */}
         {currentScreen === 'informasi-list' && (
           <InformasiListScreen
             onBack={() => navigateTo('home')}
-            onSelectArticle={(art) => {
-              setSelectedArticle(art);
-              navigateTo('informasi-detail');
-            }}
+            onNavigateEmergency={() => navigateTo('nomor-darurat')}
           />
         )}
 
