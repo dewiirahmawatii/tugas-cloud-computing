@@ -3,6 +3,17 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import multer from 'multer';
+import dotenv from 'dotenv';
+import { 
+  uploadsDir, 
+  saveUploadedFile, 
+  saveBase64Image, 
+  biznetConfig, 
+  testBiznetConnection 
+} from './storage.js';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,8 +21,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ extended: true, limit: '30mb' }));
 
 // Ensure data folder exists
 const dataDir = path.join(__dirname, 'data');
@@ -19,26 +32,41 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// Static route for uploaded files (Accessible via http://localhost:5000/uploads/<filename>)
+app.use('/uploads', express.static(uploadsDir));
+
+// Multer in-memory storage for high-speed streaming to Biznet GIO or Local Disk
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit
+});
+
 const dbPath = path.join(dataDir, 'db.json');
 
 // Initial seed data
 const initialData = {
   user: {
-    id: "usr_utdi_215410089",
-    name: "Ahmad Fauzi",
-    nim: "215410089",
+    id: "usr_utdi_24001",
+    name: "Dewi",
+    fullName: "Dewi Rahmawati",
+    nim: "245410024",
     prodi: "S1 Informatika",
     fakultas: "Fakultas Teknologi Informasi",
-    angkatan: "2023",
-    email: "ahmad.fauzi@students.utdi.ac.id",
-    phone: "0812-3456-7890",
-    alamat: "Jl. Karang Jambe No. 18, Banguntapan, Bantul, DIY",
-    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
+    angkatan: "2024",
+    email: "dewi.rahmawati24@students.utdi.ac.id",
+    phone: "0812-2456-7890",
+    alamat: "Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY",
+    avatar: "/assets/dewi-avatar.jpg",
     emergencyContacts: [
       { id: "ec_1", name: "Bambang Suharsono (Ayah)", relationship: "Orang Tua", phone: "0813-9988-7766" },
       { id: "ec_2", name: "Sri Wahyuni (Ibu)", relationship: "Orang Tua", phone: "0812-7766-5544" },
       { id: "ec_3", name: "Rizky Dwi (Teman Kost)", relationship: "Sahabat", phone: "0878-1234-5678" }
-    ]
+    ],
+    privacySettings: {
+      anonim: true,
+      hideEmail: true,
+      confirmSos: true
+    }
   },
   emergencyNumbers: [
     {
@@ -167,92 +195,100 @@ const initialData = {
       specialties: ["Pendampingan Korban PPKS", "Konsultasi Hukum & Privasi", "Pemulihan Psikososial"],
       bio: "Fasilitator resmi Satgas PPKS UTDI yang siap mendengarkan laporan dan keluhan tindak kekerasan seksual dengan jaminan identitas anonim dan perlindungan penuh.",
       jadwal: "Setiap Hari (Siaga 24 Jam via Aplikasi)"
-    },
-    {
-      id: "c_4",
-      name: "Dr. Maya Anggraini, Sp.KJ",
-      title: "Spesialis Kedokteran Jiwa (Psikiatri)",
-      category: "medis",
-      status: "offline",
-      rating: 4.9,
-      reviewsCount: 112,
-      experience: "12 Tahun",
-      almamater: "Universitas Indonesia",
-      avatar: "https://images.unsplash.com/photo-1594824813626-d352ce79860f?auto=format&fit=crop&w=300&q=80",
-      specialties: ["Gangguan Tidur / Insomnia Akut", "Depresi & Burnout Parah", "Terapi Farmakoterapi"],
-      bio: "Memberikan diagnosis medis dan konsultasi penanganan lanjutan bagi civitas akademika yang membutuhkan intervensi klinis.",
-      jadwal: "Rabu & Sabtu, 10:00 - 15:00 WIB"
-    }
-  ],
-  chatMessages: [
-    {
-      id: "msg_1",
-      counselorId: "c_1",
-      sender: "counselor",
-      text: "Halo Ahmad Fauzi! Selamat datang di layanan konseling UTDI Care. Ada yang sedang terasa berat atau ingin kamu ceritakan hari ini? Semua pembicaraan kita di sini bersifat rahasia dan aman.",
-      timestamp: "10:30 WIB",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString()
-    },
-    {
-      id: "msg_2",
-      counselorId: "c_1",
-      sender: "user",
-      text: "Halo Bu Rina, terima kasih. Akhir-akhir ini saya merasa sangat overwhelmed dengan tugas akhir dan deadline proyek kuliah. Rasanya sulit fokus dan sering cemas saat malam hari.",
-      timestamp: "10:32 WIB",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2 + 1000 * 120).toISOString()
-    },
-    {
-      id: "msg_3",
-      counselorId: "c_1",
-      sender: "counselor",
-      text: "Terima kasih sudah berani mengungkapkan ini, Ahmad. Perasaan cemas menjelang deadline tugas akhir adalah reaksi wajar tubuh saat berada di bawah tekanan tinggi. Kita bisa susun langkah kecil yang realistis bersama ya. Apakah malam ini kamu sudah sempat beristirahat cukup?",
-      timestamp: "10:35 WIB",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2 + 1000 * 300).toISOString()
     }
   ],
   sosReports: [
     {
-      id: "SOS-20261031-01",
-      userId: "usr_utdi_215410089",
-      type: "Medis",
-      title: "Pertolongan Pertama - Mahasiswa Pusing di Lab 3",
-      location: "Gedung Lab Terpadu Lt. 2, Sayap Barat UTDI",
+      id: "REP-280526-01",
+      userId: "usr_utdi_24001",
+      type: "Laporan Darurat",
+      title: "Laporan Darurat",
+      location: "Jl. Pemuda No. 17",
       coordinates: { lat: -7.7942, lng: 110.4079 },
-      note: "Teman satu meja mendadak pusing dan lemas saat praktikum jaringan.",
+      note: "Pencegahan insiden dan pendampingan di lokasi bersama tim reaksi cepat.",
       status: "Selesai",
-      date: "31 Okt 2026, 14:15 WIB",
-      officer: "Bripka Agus & Danru Security UTDI",
+      statusColor: "bg-emerald-500",
+      date: "28 Mei 2026, 10:15 WIB",
+      officer: "Tim Reaksi Cepat Satgas & Satpam",
       rating: 5,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString()
+      photoUrl: null,
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString()
     },
     {
-      id: "SOS-20261025-02",
-      userId: "usr_utdi_215410089",
-      type: "Konseling",
-      title: "Sesi Konseling Online Reguler",
-      location: "Daring (UTDI Mobile Chat)",
-      note: "Sesi bimbingan mindfulness dan manajemen waktu belajar.",
+      id: "REP-200526-02",
+      userId: "usr_utdi_24001",
+      type: "Konsultasi",
+      title: "Konsultasi",
+      location: "Chat dengan Satgas Dewi",
+      coordinates: null,
+      note: "Sesi konseling pendampingan mahasiswa dan konsultasi privasi.",
       status: "Selesai",
-      date: "25 Okt 2026, 10:30 WIB",
-      officer: "Dr. Rina Wulandari, M.Psi.",
+      statusColor: "bg-amber-500",
+      date: "20 Mei 2026, 13:40 WIB",
+      officer: "Satgas PPKS Dewi Rahmawati",
       rating: 5,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString()
+      photoUrl: null,
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 11).toISOString()
     },
     {
-      id: "SOS-20261018-03",
-      userId: "usr_utdi_215410089",
-      type: "Keamanan",
-      title: "Laporan Kunci Tertinggal di Area Parkir Timur",
-      location: "Parkir Mahasiswa Timur UTDI",
+      id: "REP-150526-03",
+      userId: "usr_utdi_24001",
+      type: "Laporan Darurat",
+      title: "Laporan Darurat",
+      location: "Parkiran Kampus",
       coordinates: { lat: -7.7945, lng: 110.4082 },
-      note: "Kunci kontak motor tertinggal, dibantu diamankan oleh pos satpam.",
+      note: "Patroli pengamanan area parkir timur dan pemeriksaan kendaraan.",
       status: "Selesai",
-      date: "18 Okt 2026, 17:40 WIB",
-      officer: "Pak Bambang (Satpam Pos 2)",
+      statusColor: "bg-emerald-500",
+      date: "15 Mei 2026, 16:45 WIB",
+      officer: "Danru Pos Satpam UTDI",
       rating: 5,
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 13).toISOString()
+      photoUrl: null,
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 16).toISOString()
     }
   ],
+  counselingRooms: {
+    chatbot: [
+      {
+        id: 'bot_1',
+        sender: 'bot',
+        text: 'Halo, ada yang bisa kami bantu?',
+        timestamp: '10:00 WIB'
+      }
+    ],
+    'satgas-pusat': [
+      {
+        id: 'pusat_1',
+        sender: 'satgas',
+        text: 'Halo, ada yang bisa kami bantu? Layanan Satgas Pusat PPKPS UTDI siap melayani 24 jam.',
+        timestamp: '10:05 WIB'
+      }
+    ],
+    'satgas-dewi': [
+      {
+        id: 'dewi_1',
+        sender: 'satgas',
+        text: 'Hai Hari ini Satgas Dewi di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️',
+        timestamp: '10:10 WIB'
+      }
+    ],
+    'satgas-abel': [
+      {
+        id: 'abel_1',
+        sender: 'satgas',
+        text: 'Hai Hari ini Satgas Abel di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️',
+        timestamp: '10:12 WIB'
+      }
+    ],
+    'satgas-putra': [
+      {
+        id: 'putra_1',
+        sender: 'satgas',
+        text: 'Halo, Satgas Putra di sini. Tim keamanan & investigasi siap mendampingi Anda di kampus.',
+        timestamp: '10:15 WIB'
+      }
+    ]
+  },
   articles: [
     {
       id: "art_1",
@@ -261,28 +297,8 @@ const initialData = {
       readTime: "3 Menit Baca",
       date: "28 Okt 2026",
       author: "Pusat Keselamatan & Sarpras UTDI",
-      image: "https://images.unsplash.com/photo-1584467735871-8e85353a8413?auto=format&fit=crop&w=600&q=80",
-      summary: "Ketahui jalur evakuasi resmi, tangga darurat setiap gedung kuliah, dan lokasi 3 titik kumpul aman UTDI.",
-      content: `
-### Prosedur Tanggap Darurat Gempa di Kampus UTDI
-
-Universitas Teknologi Digital Indonesia (UTDI) telah melengkapi setiap gedung perkuliahan dengan standar keselamatan gempa. Saat merasakan guncangan:
-
-1. **JANGAN PANIK & TUNDUK LINDUNGI KEPALA (Drop, Cover, Hold On)**
-   Segera berlindung di bawah meja praktikum yang kokoh atau lindungi kepala dengan tas ransel. Jauhi jendela kaca dan rak buku tinggi.
-
-2. **JANGAN GUNAKAN LIFT**
-   Gunakan selalu tangga darurat yang telah bertanda hijau "EXIT EMERGENSI". Tetap tenang dan jangan saling mendorong di tangga.
-
-3. **MENUJU TITIK KUMPUL (ASSEMBLY POINT)**
-   Kampus UTDI memiliki 3 Titik Kumpul Resmi:
-   - **Titik Kumpul A:** Lapangan Olahraga / Parkir Depan Rektorat
-   - **Titik Kumpul B:** Area Terbuka Gazebo Barat
-   - **Titik Kumpul C:** Lapangan Upacara / Halaman Gedung Kuliah Bersama
-
-4. **LAPORKAN KONDISI MELALUI APLIKASI**
-   Buka fitur **SOS / Lapor Darurat** pada aplikasi UTDI Mobile Care ini untuk memberitahukan posisi Anda jika ada rekan yang terluka atau terperangkap.
-      `
+      image: "/assets/maya-safety-walk.jpg",
+      summary: "Ketahui jalur evakuasi resmi, tangga darurat setiap gedung kuliah, dan lokasi 3 titik kumpul aman UTDI."
     },
     {
       id: "art_2",
@@ -291,25 +307,8 @@ Universitas Teknologi Digital Indonesia (UTDI) telah melengkapi setiap gedung pe
       readTime: "4 Menit Baca",
       date: "25 Okt 2026",
       author: "Satgas PPKS Universitas Teknologi Digital Indonesia",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=600&q=80",
-      summary: "Komitmen nol toleransi kekerasan seksual. Kerahasiaan pelapor dijamin 100% dan mendapat pendampingan hukum serta psikologis.",
-      content: `
-### Kampus Bebas Kekerasan Seksual (PPKS UTDI)
-
-Satgas Pencegahan dan Penanganan Kekerasan Seksual (PPKS) UTDI dibentuk berdasarkan Permendikbudristek No. 30 Tahun 2021 untuk memastikan seluruh civitas akademika belajar dan berkarya secara aman.
-
-#### Hak-Hak Korban dan Pelapor:
-1. **Jaminan Kerahasiaan Identitas (Anonimitas Penuh)**
-   Data pelapor dan korban tidak akan dibocorkan ke pihak manapun tanpa persetujuan eksplisit.
-2. **Pendampingan Psikologis Gratis**
-   Disediakan sesi terapi dengan psikolog klinis kampus hingga pemulihan optimal.
-3. **Pendampingan Hukum & Akademik**
-   Jaminan keamanan nilai, pembimbingan akademik, serta advokasi hukum jika diperlukan.
-
-#### Cara Melapor di Aplikasi:
-- Tekan menu **Konsultasi** -> Pilih **Ibu Siti Rahmawati, S.H. (Satgas PPKS)**
-- Atau hubungi hotline darurat PPKS langsung: **0811-2555-7788**
-      `
+      image: "/assets/sari-cyber-shield.jpg",
+      summary: "Komitmen nol toleransi kekerasan seksual. Kerahasiaan pelapor dijamin 100% dan mendapat pendampingan hukum serta psikologis."
     },
     {
       id: "art_3",
@@ -318,39 +317,8 @@ Satgas Pencegahan dan Penanganan Kekerasan Seksual (PPKS) UTDI dibentuk berdasar
       readTime: "3 Menit Baca",
       date: "20 Okt 2026",
       author: "Unit Konseling Mahasiswa UTDI",
-      image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80",
-      summary: "Teknik 20-20-20, manajemen pomodoro, serta latihan pernapasan box breathing untuk mahasiswa rumpun informatika.",
-      content: `
-### Menjaga Kesehatan Mental Calon Digital Innovator
-
-Kuliah di rumpun teknologi seringkali menuntut waktu berjam-jam di depan layar kode program, debugging rumit, dan deadline tugas yang padat. Berikut kiat menjaga kewarasan dan performa akademik:
-
-1. **Aturan 20-20-20 untuk Mata & Otak**
-   Setiap 20 menit coding, pandanglah objek sejauh 20 kaki (6 meter) selama minimal 20 detik. Ini menurunkan ketegangan saraf optik dan otak.
-2. **Pisahkan Ruang Belajar dan Istirahat**
-   Jangan membuka laptop di atas tempat tidur agar pola tidur Anda tidak terganggu oleh sinyal 'siaga kerja'.
-3. **Teknik 'Rubber Duck Debugging' Bersama Teman**
-   Jika merasa buntu pada kode program, bicarakan alur logika pada rekan atau konselor daripada menyalahkan diri sendiri.
-4. **Gunakan Layanan Konseling UTDI**
-   Jangan ragu untuk berbincang dengan Konselor di aplikasi UTDI Mobile Care kapanpun Anda merasa lelah berlebih.
-      `
-    },
-    {
-      id: "art_4",
-      title: "Lokasi Kotak P3K, Tabung Pemadam APAR, dan Pos Satpam UTDI",
-      category: "Fasilitas Kampus",
-      readTime: "2 Menit Baca",
-      date: "14 Okt 2026",
-      author: "Biro Umum & Keamanan Kampus",
-      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80",
-      summary: "Peta titik strategis peralatan keselamatan di Gedung Kuliah, Laboratorium Komputer, dan Rektorat.",
-      content: `
-### Lokasi Fasilitas Darurat di Lingkungan Kampus
-
-- **Kotak P3K Lengkap:** Tersedia di Ruang TU Fakultas, Setiap Laboratorium Komputer (Lab 1 - Lab 6), dan Pos Satpam Utama.
-- **Tabung APAR (Pemadam Api Ringan):** Berada di setiap bordes tangga lantai 1, 2, 3, lorong server lab jaringan, dan kantin kampus.
-- **Defibrilator / Ruang Istirahat Medis:** Poliklinik UTDI Gedung Sayap Barat, Buka Senin - Jumat.
-      `
+      image: "/assets/diko-mascot.jpg",
+      summary: "Teknik 20-20-20, manajemen pomodoro, serta latihan pernapasan box breathing untuk mahasiswa rumpun informatika."
     }
   ]
 };
@@ -363,7 +331,12 @@ function getDb() {
   }
   try {
     const raw = fs.readFileSync(dbPath, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.user) parsed.user = initialData.user;
+    if (!parsed.sosReports) parsed.sosReports = initialData.sosReports;
+    if (!parsed.counselingRooms) parsed.counselingRooms = initialData.counselingRooms;
+    if (!parsed.user.privacySettings) parsed.user.privacySettings = initialData.user.privacySettings;
+    return parsed;
   } catch (err) {
     fs.writeFileSync(dbPath, JSON.stringify(initialData, null, 2));
     return initialData;
@@ -374,20 +347,117 @@ function saveDb(data) {
   fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 }
 
-// Routes
+getDb();
 
-// 1. Health check
-app.get('/api/health', (req, res) => {
+let activeSos = null;
+
+// ========================================================
+// 1. STORAGE ENDPOINTS (Biznet GIO NEO Object Storage / Local)
+// ========================================================
+
+/**
+ * GET /api/storage/status
+ * Cek status layanan cloud storage (Biznet GIO vs Local)
+ */
+app.get('/api/storage/status', async (req, res) => {
+  const biznetStatus = await testBiznetConnection();
   res.json({
-    status: 'ok',
-    app: 'UTDI Mobile Campus Care & Emergency API',
-    institution: 'Universitas Teknologi Digital Indonesia',
-    version: '2.0.0',
-    timestamp: new Date().toISOString()
+    success: true,
+    activeProvider: biznetConfig.isConfigured ? 'biznet-gio' : 'local-storage',
+    biznetGio: {
+      provider: 'Biznet GIO NEO Object Storage (https://www.biznetgio.com)',
+      endpoint: biznetConfig.endpoint,
+      bucket: biznetConfig.bucket,
+      configured: biznetConfig.isConfigured,
+      connection: biznetStatus
+    },
+    localStorage: {
+      urlPrefix: '/uploads/',
+      folder: uploadsDir
+    }
   });
 });
 
-// 2. Auth & User Profile
+/**
+ * POST /api/upload
+ * Endpoint upload file multipart (foto profil, bukti laporan SOS, attachment chat)
+ */
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Tidak ada file yang diunggah. Pastikan field berformat multipart bernama "file".' 
+      });
+    }
+
+    const savedFile = await saveUploadedFile({
+      buffer: req.file.buffer,
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype
+    });
+
+    res.json({
+      success: true,
+      message: savedFile.provider === 'biznet-gio' 
+        ? 'Foto/Berkas berhasil disimpan ke Biznet GIO NEO Object Storage!' 
+        : 'Foto/Berkas berhasil disimpan ke storage lokal server!',
+      ...savedFile
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal mengunggah berkas: ' + err.message });
+  }
+});
+
+/**
+ * POST /api/upload/base64
+ * Endpoint upload gambar base64 langsung dari client (Webcam / Mobile Canvas)
+ */
+app.post('/api/upload/base64', async (req, res) => {
+  try {
+    const { data, filename = 'capture' } = req.body;
+    if (!data) {
+      return res.status(400).json({ success: false, message: 'Data base64 tidak valid.' });
+    }
+
+    const result = await saveBase64Image(data, filename);
+    res.json({
+      success: true,
+      message: result.provider === 'biznet-gio'
+        ? 'Foto base64 berhasil disimpan ke Biznet GIO NEO Object Storage!'
+        : 'Foto base64 berhasil disimpan ke storage lokal!',
+      ...result
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal memproses base64: ' + err.message });
+  }
+});
+
+/**
+ * GET /api/uploads
+ * List semua file yang tersimpan di server storage lokal
+ */
+app.get('/api/uploads', (req, res) => {
+  try {
+    const files = fs.readdirSync(uploadsDir).map(file => {
+      const stats = fs.statSync(path.join(uploadsDir, file));
+      return {
+        filename: file,
+        url: `/uploads/${file}`,
+        size: stats.size,
+        createdAt: stats.birthtime
+      };
+    });
+    res.json({ success: true, count: files.length, files });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ========================================================
+// 2. AUTH & USER PROFILE ENDPOINTS
+// ========================================================
+
 app.get('/api/auth/me', (req, res) => {
   const db = getDb();
   res.json({ success: true, user: db.user });
@@ -396,11 +466,10 @@ app.get('/api/auth/me', (req, res) => {
 app.post('/api/auth/login', (req, res) => {
   const { identifier, password } = req.body;
   const db = getDb();
-  // Allow login with student NIM or any credentials for demo convenience
   res.json({
     success: true,
     message: "Login berhasil! Selamat datang di UTDI Mobile.",
-    token: "utdi_jwt_token_sample_" + Date.now(),
+    token: "utdi_jwt_token_" + Date.now(),
     user: db.user
   });
 });
@@ -412,6 +481,7 @@ app.post('/api/auth/register', (req, res) => {
     ...db.user,
     id: "usr_" + Date.now(),
     name: name || db.user.name,
+    fullName: name || db.user.fullName,
     nim: nim || db.user.nim,
     email: email || db.user.email,
     phone: phone || db.user.phone,
@@ -427,15 +497,17 @@ app.post('/api/auth/register', (req, res) => {
 });
 
 app.put('/api/auth/profile', (req, res) => {
-  const { name, phone, email, alamat, prodi } = req.body;
+  const { name, fullName, phone, email, alamat, prodi, avatar } = req.body;
   const db = getDb();
   db.user = {
     ...db.user,
-    name: name || db.user.name,
-    phone: phone || db.user.phone,
-    email: email || db.user.email,
-    alamat: alamat || db.user.alamat,
-    prodi: prodi || db.user.prodi
+    name: name !== undefined ? name : db.user.name,
+    fullName: fullName !== undefined ? fullName : db.user.fullName,
+    phone: phone !== undefined ? phone : db.user.phone,
+    email: email !== undefined ? email : db.user.email,
+    alamat: alamat !== undefined ? alamat : db.user.alamat,
+    prodi: prodi !== undefined ? prodi : db.user.prodi,
+    avatar: avatar !== undefined ? avatar : db.user.avatar
   };
   saveDb(db);
   res.json({
@@ -453,7 +525,29 @@ app.put('/api/auth/password', (req, res) => {
   });
 });
 
-// Emergency contacts management for student
+// Privacy Settings
+app.get('/api/auth/privacy', (req, res) => {
+  const db = getDb();
+  res.json({ success: true, privacy: db.user.privacySettings });
+});
+
+app.put('/api/auth/privacy', (req, res) => {
+  const { anonim, hideEmail, confirmSos } = req.body;
+  const db = getDb();
+  db.user.privacySettings = {
+    anonim: anonim !== undefined ? anonim : db.user.privacySettings.anonim,
+    hideEmail: hideEmail !== undefined ? hideEmail : db.user.privacySettings.hideEmail,
+    confirmSos: confirmSos !== undefined ? confirmSos : db.user.privacySettings.confirmSos
+  };
+  saveDb(db);
+  res.json({
+    success: true,
+    message: "Pengaturan privasi & keamanan diperbarui!",
+    privacy: db.user.privacySettings
+  });
+});
+
+// Emergency Contacts
 app.get('/api/auth/emergency-contacts', (req, res) => {
   const db = getDb();
   res.json({ success: true, contacts: db.user.emergencyContacts });
@@ -489,33 +583,46 @@ app.delete('/api/auth/emergency-contacts/:id', (req, res) => {
   });
 });
 
-// 3. Official Emergency Numbers Directory
+// ========================================================
+// 3. EMERGENCY NUMBERS DIRECTORY
+// ========================================================
+
 app.get('/api/emergency/contacts', (req, res) => {
   const db = getDb();
   res.json({ success: true, contacts: db.emergencyNumbers });
 });
 
-// 4. SOS Emergency Reports
-let activeSos = null; // in-memory tracking of ongoing SOS
+// ========================================================
+// 4. SOS EMERGENCY REPORTING & HISTORY
+// ========================================================
 
 app.post('/api/emergency/sos', (req, res) => {
-  const { type, location, note, coordinates } = req.body;
+  const { type, location, note, coordinates, photoUrl } = req.body;
   const db = getDb();
-  const reportId = "SOS-" + Date.now().toString().slice(-6);
+  const reportId = "REP-" + Date.now().toString().slice(-6);
   
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString('id-ID', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  }) + ", " + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
+
   const newReport = {
     id: reportId,
     userId: db.user.id,
-    type: type || "Darurat Umum",
-    title: `Sinyal Darurat ${type || 'SOS'} - ${location || 'Kampus UTDI'}`,
+    type: type || "Laporan Darurat",
+    title: type ? `Laporan ${type}` : "Sinyal Darurat SOS",
     location: location || "Gedung Kuliah Terpadu UTDI",
     coordinates: coordinates || { lat: -7.7942, lng: 110.4079 },
     note: note || "Panggilan darurat seketika melalui tombol SOS aplikasi.",
     status: "Petugas Menuju Lokasi",
-    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + " WIB",
-    officer: "Bripka Bambang & Tim Tanggap Keamanan Kampus",
+    statusColor: "bg-red-500",
+    date: formattedDate,
+    officer: "Bripka Agus & Danru Security Pos Utama UTDI",
+    photoUrl: photoUrl || null,
     etaMinutes: 3,
-    createdAt: new Date().toISOString()
+    createdAt: now.toISOString()
   };
 
   db.sosReports.unshift(newReport);
@@ -543,6 +650,7 @@ app.put('/api/emergency/sos/:id/cancel', (req, res) => {
   const report = db.sosReports.find(r => r.id === id);
   if (report) {
     report.status = "Dibatalkan Pengguna";
+    report.statusColor = "bg-slate-500";
     saveDb(db);
   }
   if (activeSos && activeSos.id === id) {
@@ -560,6 +668,7 @@ app.put('/api/emergency/sos/:id/resolve', (req, res) => {
   const report = db.sosReports.find(r => r.id === id);
   if (report) {
     report.status = "Selesai";
+    report.statusColor = "bg-emerald-500";
     saveDb(db);
   }
   if (activeSos && activeSos.id === id) {
@@ -571,7 +680,7 @@ app.put('/api/emergency/sos/:id/resolve', (req, res) => {
   });
 });
 
-// 5. Riwayat (History)
+// History endpoints
 app.get('/api/history', (req, res) => {
   const db = getDb();
   res.json({
@@ -580,114 +689,130 @@ app.get('/api/history', (req, res) => {
   });
 });
 
-// 6. Counselors
+app.get('/api/emergency/sos/history', (req, res) => {
+  const db = getDb();
+  res.json({
+    success: true,
+    history: db.sosReports
+  });
+});
+
+// ========================================================
+// 5. CONSULTATION & SATGAS CHAT
+// ========================================================
+
+app.get('/api/counseling/chat/:room', (req, res) => {
+  const { room } = req.params;
+  const db = getDb();
+  const messages = db.counselingRooms?.[room] || [];
+  res.json({ success: true, messages });
+});
+
+const satgasResponses = {
+  chatbot: [
+    "Halo! Saya asisten virtual UTDI Care. Apakah ada kendala atau informasi satgas yang bisa saya bantu arahkan?",
+    "Untuk bantuan darurat cepat, Anda bisa menekan tombol SOS atau memilih hotline Satgas PPKS di menu layanan.",
+    "Semua sesi konsultasi di UTDI Care terjamin kerahasiaannya dengan perlindungan hukum kampus penuh."
+  ],
+  'satgas-pusat': [
+    "Terima kasih telah menghubungi Satgas Pusat PPKPS UTDI. Kami menerima aduan Anda dengan kerahasiaan 100%. Boleh diceritakan waktu dan tempat kejadiannya?",
+    "Posko Satgas Pusat di Gedung Rektorat Sayap Barat selalu siaga. Anda berhak mendapatkan pendampingan hukum dan psikologis."
+  ],
+  'satgas-dewi': [
+    "Hai! Terima kasih sudah berani bercerita ke Dewi. Kamu sangat berani dan tidak sendiri. Ceritakan pelan-pelan ya, aku mendengarkan.",
+    "Perasaanmu valid. Dewi siap mendampingi proses mediasi atau bimbingan konseling jika kamu menginginkannya❤️"
+  ],
+  'satgas-abel': [
+    "Halo, Abel mendengarkan. Ambil napas sejenak, kita bicarakan perlahan. Kesehatan mental dan rasa amanmu adalah prioritas utama.",
+    "Kamu bisa bercerita secara anonim kapanpun kamu merasa nyaman. Kami di sini untuk mendukung pemulihanmu."
+  ],
+  'satgas-putra': [
+    "Halo, Satgas Putra di sini. Jika Anda membutuhkan pengawalan fisik atau patroli keamanan di area kampus, segera beri tahu kami titik lokasi Anda.",
+    "Laporan Anda segera kami koordinasikan dengan tim patroli pos satpam utama UTDI."
+  ]
+};
+
+app.post('/api/counseling/chat/:room', (req, res) => {
+  const { room } = req.params;
+  const { text, isAnonymous, attachmentUrl } = req.body;
+  const db = getDb();
+
+  if (!db.counselingRooms) db.counselingRooms = {};
+  if (!db.counselingRooms[room]) db.counselingRooms[room] = [];
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
+
+  const userMessage = {
+    id: 'msg_' + Date.now(),
+    sender: 'user',
+    text: text || '',
+    isAnonymous: !!isAnonymous,
+    attachmentUrl: attachmentUrl || null,
+    timestamp: timeStr,
+    createdAt: now.toISOString()
+  };
+
+  db.counselingRooms[room].push(userMessage);
+
+  const replies = satgasResponses[room] || satgasResponses.chatbot;
+  const randomReply = replies[Math.floor(Math.random() * replies.length)];
+
+  const replyMessage = {
+    id: 'reply_' + (Date.now() + 1),
+    sender: room === 'chatbot' ? 'bot' : 'satgas',
+    text: randomReply,
+    timestamp: timeStr,
+    createdAt: new Date(Date.now() + 600).toISOString()
+  };
+
+  db.counselingRooms[room].push(replyMessage);
+  saveDb(db);
+
+  res.json({
+    success: true,
+    userMessage,
+    replyMessage
+  });
+});
+
 app.get('/api/counselors', (req, res) => {
   const db = getDb();
   res.json({ success: true, counselors: db.counselors });
 });
 
-app.get('/api/counselors/:id', (req, res) => {
-  const { id } = req.params;
-  const db = getDb();
-  const counselor = db.counselors.find(c => c.id === id);
-  if (!counselor) {
-    return res.status(404).json({ success: false, message: "Konselor tidak ditemukan" });
-  }
-  res.json({ success: true, counselor });
-});
+// ========================================================
+// 6. ARTICLES & EDUCATIONAL CONTENT
+// ========================================================
 
-// Chat Messages with counselor
-app.get('/api/counselors/:id/messages', (req, res) => {
-  const { id } = req.params;
-  const db = getDb();
-  const messages = db.chatMessages.filter(m => m.counselorId === id);
-  res.json({ success: true, messages });
-});
-
-// Counselor smart responses bank
-const automatedReplies = [
-  "Terima kasih atas keterbukaannya. Saya sangat menghargai ceritamu. Setiap langkah kecil dalam menghadapi kendala perkuliahan dan tekanan mental sangat berarti.",
-  "Saya mengerti situasi ini tidak mudah untukmu. Apakah kamu merasakan ketegangan fisik seperti sesak atau sulit konsentrasi saat memikirkan hal tersebut?",
-  "Mari kita fokus pada hal-hal yang berada di bawah kendalimu hari ini. Boleh diceritakan bagian mana dari tugas atau masalah ini yang paling menyita energimu?",
-  "Kamu tidak sendirian. Satgas dan Unit Konseling UTDI selalu ada di sini untuk mendampingi sampai kamu merasa lebih tenang dan aman.",
-  "Saran saya untuk sejenak: tarik napas perlahan selama 4 detik, tahan 4 detik, lalu hembuskan perlahan 6 detik. Setelah rileks, kita lanjutkan pembicaraan ini ya."
-];
-
-app.post('/api/counselors/:id/messages', (req, res) => {
-  const { id } = req.params;
-  const { text } = req.body;
-  const db = getDb();
-
-  const counselor = db.counselors.find(c => c.id === id) || { name: "Konselor UTDI" };
-
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
-
-  const userMsg = {
-    id: "msg_" + Date.now(),
-    counselorId: id,
-    sender: "user",
-    text,
-    timestamp: timeStr,
-    createdAt: now.toISOString()
-  };
-
-  db.chatMessages.push(userMsg);
-
-  // Generate automated reply from counselor
-  const randomReply = automatedReplies[Math.floor(Math.random() * automatedReplies.length)];
-  const counselorReply = {
-    id: "msg_" + (Date.now() + 1),
-    counselorId: id,
-    sender: "counselor",
-    text: randomReply,
-    timestamp: timeStr,
-    createdAt: new Date(Date.now() + 500).toISOString()
-  };
-
-  db.chatMessages.push(counselorReply);
-  saveDb(db);
-
-  res.json({
-    success: true,
-    userMessage: userMsg,
-    counselorReply: counselorReply
-  });
-});
-
-// 7. Articles & Guides
 app.get('/api/articles', (req, res) => {
   const db = getDb();
   res.json({ success: true, articles: db.articles });
 });
 
-app.get('/api/articles/:id', (req, res) => {
-  const { id } = req.params;
-  const db = getDb();
-  const article = db.articles.find(a => a.id === id);
-  if (!article) {
-    return res.status(404).json({ success: false, message: "Artikel tidak ditemukan" });
-  }
-  res.json({ success: true, article });
-});
+// ========================================================
+// 7. SERVE FRONTEND STATIC BUILD
+// ========================================================
 
-// 8. Serve Frontend Static Build
 const distPath = path.join(__dirname, '..', 'frontend', 'dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
+    if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
       res.sendFile(path.join(distPath, 'index.html'));
     }
   });
 }
 
-// Start server
+// Start Server
 app.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(`🚀 UTDI CARE & EMERGENCY SYSTEM FULL-STACK RUNNING`);
-  console.log(`📍 Web URL: http://localhost:${PORT}`);
+  console.log(`=======================================================`);
+  console.log(`🚀 UTDI MOBILE CARE & EMERGENCY SYSTEM API RUNNING`);
+  console.log(`📍 Server URL: http://localhost:${PORT}`);
+  console.log(`🌐 Storage Provider: ${biznetConfig.isConfigured ? 'Biznet GIO NEO Object Storage' : 'Local Disk Storage (/uploads/)'}`);
+  console.log(`☁️ Biznet GIO Endpoint: ${biznetConfig.endpoint}`);
+  console.log(`📦 Biznet GIO Bucket: ${biznetConfig.bucket}`);
   console.log(`🏫 Universitas Teknologi Digital Indonesia (STMIK AKAKOM)`);
-  console.log(`📱 Frontend + Backend API Ready`);
-  console.log(`===============================================`);
+  console.log(`💾 Live DB: ${dbPath}`);
+  console.log(`=======================================================`);
 });

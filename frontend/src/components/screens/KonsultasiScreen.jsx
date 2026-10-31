@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, Send, Phone, MessageSquare, ChevronRight, 
-  Bot, ShieldCheck, PhoneCall, X, User, Sparkles
+  Bot, ShieldCheck, PhoneCall, X, User, Sparkles, Paperclip, 
+  Camera, Image as ImageIcon, CheckCircle2
 } from 'lucide-react';
+import { api } from '../../services/api';
 
 export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   // Current chat room: 'chatbot', 'satgas-pusat', 'satgas-dewi', 'satgas-abel', 'satgas-putra'
@@ -11,6 +13,11 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   // Anonymous Mode Decision Modal State
   const [showAnonimModal, setShowAnonimModal] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(true);
+
+  // Storage / Attachment state
+  const [attachedImage, setAttachedImage] = useState(null);
+  const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Messages per room
   const [roomMessages, setRoomMessages] = useState({
@@ -56,6 +63,20 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Load room messages from backend on mount or room change
+  useEffect(() => {
+    let isMounted = true;
+    api.getRoomMessages(activeRoom).then(res => {
+      if (isMounted && res && res.messages && res.messages.length > 0) {
+        setRoomMessages(prev => ({
+          ...prev,
+          [activeRoom]: res.messages
+        }));
+      }
+    });
+    return () => { isMounted = false; };
+  }, [activeRoom]);
+
   const currentMessages = roomMessages[activeRoom] || [];
 
   useEffect(() => {
@@ -98,14 +119,37 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
     }
   };
 
+  // Handle Photo Attachment to Storage
+  const handleAttachmentSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAttachment(true);
+    try {
+      const res = await api.uploadFile(file);
+      if (res && res.url) {
+        setAttachedImage(res.url);
+      }
+    } catch (err) {
+      console.error('Error uploading chat attachment:', err);
+    } finally {
+      setIsUploadingAttachment(false);
+    }
+  };
+
   // Send message
-  const handleSend = (textToSend = inputText) => {
-    if (!textToSend.trim()) return;
+  const handleSend = async (textToSend = inputText) => {
+    if (!textToSend.trim() && !attachedImage) return;
+
+    const currentAttachment = attachedImage;
+    setAttachedImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
     const newMsg = {
       id: 'user_' + Date.now(),
       sender: 'user',
       text: textToSend,
+      attachmentUrl: currentAttachment,
       senderName: isAnonymous ? 'Anda (Anonim)' : 'Dewi Rahmawati'
     };
 
@@ -117,45 +161,42 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
     setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    // Call backend API to save message and receive response
+    try {
+      const response = await api.sendRoomMessage(activeRoom, {
+        text: textToSend,
+        isAnonymous,
+        attachmentUrl: currentAttachment
+      });
+
       setIsTyping(false);
 
       if (activeRoom === 'chatbot') {
-        // Main Chat Bot logic matching konsultasi 2 & 3
         const botReply = {
           id: 'bot_' + Date.now(),
           sender: 'bot',
           text: `Silahkan pilih tujuan layanan satgas.\nApakah anda ingin terhubung dengan satgas tertentu atau langsung menuju satgas pusat?`,
           showOptions: true
         };
-
         setRoomMessages((prev) => ({
           ...prev,
           chatbot: [...prev.chatbot, botReply]
         }));
       } else {
-        // Dedicated Satgas replies with empathy and contact encouragement
-        const satgasData = satgasDirectory[activeRoom];
-        const smartReplies = [
-          `Terima kasih sudah berbagi ceritamu. Kami sangat menghargai keberanianmu. Cerita ini sepenuhnya aman dan rahasia bersama kami.`,
-          `Kami memahami situasimu tidak mudah. Jika kamu butuh pendampingan langsung, kamu bisa telepon kami di ${satgasData.phone} kapan saja.`,
-          `Apakah kamu saat ini berada di tempat yang aman? Jika merasa cemas, tarik napas perlahan ya. Kami siap membantu setiap langkahmu.`,
-          `Baik, laporanmu kami catat untuk pendampingan. Kamu juga bisa chat WhatsApp langsung ke nomor resmi kami.`
-        ];
-        const randomReply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
-
+        const replyText = response?.replyMessage?.text || "Pesan telah kami terima. Satgas siaga mendampingi Anda.";
         const satgasReply = {
           id: 'satgas_' + Date.now(),
           sender: 'satgas',
-          text: randomReply
+          text: replyText
         };
-
         setRoomMessages((prev) => ({
           ...prev,
           [activeRoom]: [...(prev[activeRoom] || []), satgasReply]
         }));
       }
-    }, 800);
+    } catch (e) {
+      setIsTyping(false);
+    }
   };
 
   // Navigating to direct Satgas consultation
@@ -198,39 +239,41 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
               Chat dengan Anonim?
             </h3>
             
-            <p className="text-[11px] text-blue-100/90 mt-1.5 mb-4 leading-relaxed">
-              Pilih <strong className="text-[#F5A623]">Ya</strong> untuk merahasiakan identitasmu sepenuhnya. Atau pilih <strong className="text-white">Tidak</strong> jika ingin konselor Satgas mengenali akun mahasiswamu.
+            <p className="text-[11px] text-blue-200 mt-1.5 leading-relaxed">
+              Pilih apakah Anda ingin berkonsultasi secara anonim tanpa nama atau menggunakan identitas mahasiswa UTDI.
             </p>
 
-            {/* Action Buttons */}
-            <div className="space-y-2">
-              
-              {/* Option 1: Ya, Chat Anonim */}
+            {/* Decision Buttons */}
+            <div className="mt-5 space-y-2.5">
+              {/* Ya, Chat Anonim (Golden Amber) */}
               <button
                 type="button"
                 onClick={() => {
                   setIsAnonymous(true);
                   setShowAnonimModal(false);
                 }}
-                className="w-full bg-[#F5A623] hover:bg-amber-400 active:scale-95 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all shadow-md shadow-[#F5A623]/25"
+                className="w-full bg-[#F5A623] hover:bg-amber-400 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs transition active:scale-95 shadow-lg flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                 <span>Ya, Chat dengan Anonim</span>
               </button>
 
-              {/* Option 2: Tidak, Gunakan Akun */}
+              {/* Tidak, Pakai Akun Mahasiswa */}
               <button
                 type="button"
                 onClick={() => {
                   setIsAnonymous(false);
                   setShowAnonimModal(false);
                 }}
-                className="w-full bg-[#162a4d] hover:bg-[#1f3a69] active:scale-95 border border-[#2b4c85] text-slate-200 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 transition-all"
+                className="w-full bg-[#1E3866] hover:bg-[#254680] border border-[#2b4c85] text-white font-bold py-2.5 px-4 rounded-xl text-xs transition active:scale-95 shadow flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <User className="w-4 h-4 text-blue-300" />
                 <span>Tidak, Gunakan Akun Mahasiswa</span>
               </button>
+            </div>
 
+            <div className="mt-3 text-[9px] text-slate-400">
+              Kerahasiaan data pelapor dijamin 100% oleh Satgas PPKS UTDI.
             </div>
 
           </div>
@@ -238,115 +281,84 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       )}
 
       {/* ======================================================== */}
-      {/* 2. PINNED TOP HEADER: (←) Konsultasi / Curhat            */}
+      {/* 2. TOP HEADER BAR WITH BACK BUTTON                       */}
       {/* ======================================================== */}
-      <div className="px-5 pt-3 pb-3 flex items-center justify-between border-b border-[#2b4c85] bg-[#1E3866] z-30 shrink-0 relative">
+      <div className="px-4 py-3 bg-[#162a4d] border-b border-[#2b4c85] flex items-center justify-between shrink-0 relative z-30 shadow-md">
         
-        {/* Left Section: Back Button (←) & Title */}
+        {/* Left Section: Back Button + Title */}
         <div className="flex items-center space-x-3">
           <button
             type="button"
             onClick={handleHeaderBack}
-            className="w-10 h-10 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] active:bg-[#254680] border border-[#2b4c85] flex items-center justify-center text-white transition-all active:scale-90 cursor-pointer shadow-md shrink-0"
-            title="Kembali ke Beranda"
+            className="w-9 h-9 rounded-full bg-[#112140] hover:bg-[#1a3361] active:bg-[#23437d] border border-[#2b4c85] flex items-center justify-center text-white transition active:scale-90 cursor-pointer shadow"
+            title={activeRoom !== 'chatbot' ? "Kembali ke Chat Bot" : "Kembali ke Beranda"}
           >
             <ArrowLeft className="w-5 h-5 text-white stroke-[2.5]" />
           </button>
+
           <div>
-            <h2 className="text-base sm:text-lg font-black text-[#F5A623] tracking-wide leading-tight">
+            <h2 className="text-sm sm:text-base font-black text-[#F5A623] tracking-wide leading-none">
               Konsultasi / Curhat
             </h2>
-            <span className="text-[10px] text-blue-200/80">Layanan Pendampingan Satgas UTDI</span>
+            <span className="text-[10px] text-blue-200 block mt-0.5 font-medium">
+              {activeRoom === 'chatbot' ? 'Layanan Bantuan Otomatis' : currentSatgas?.name}
+            </span>
           </div>
         </div>
 
-        {/* Right Section: Mode Indicator Badge + Call Button */}
-        <div className="flex items-center space-x-2 shrink-0">
-          
-          {/* Clickable Badge to Switch or Toggle Anonymous Mode */}
-          <button
-            type="button"
-            onClick={() => setShowAnonimModal(true)}
-            className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer ${
-              isAnonymous 
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40 hover:bg-emerald-500/30'
-                : 'bg-blue-500/20 text-blue-300 border-blue-400/40 hover:bg-blue-500/30'
-            }`}
-            title="Klik untuk ubah mode anonim"
-          >
-            {isAnonymous ? (
-              <>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Anonim</span>
-              </>
-            ) : (
-              <>
-                <User className="w-3.5 h-3.5 text-blue-300" />
-                <span>Akun Dewi</span>
-              </>
-            )}
-          </button>
-
-          {/* If in dedicated satgas room, show direct call action */}
-          {activeRoom !== 'chatbot' && currentSatgas && (
-            <a
-              href={`tel:${currentSatgas.phone}`}
-              className="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow transition active:scale-95"
-              title="Telepon Langsung"
-            >
-              <Phone className="w-4 h-4" />
-            </a>
-          )}
-        </div>
+        {/* Right Section: Anonymous Mode Pill Toggle */}
+        <button
+          type="button"
+          onClick={() => setIsAnonymous(!isAnonymous)}
+          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition active:scale-95 cursor-pointer shadow-sm ${
+            isAnonymous 
+              ? 'bg-emerald-500/15 border-emerald-400/40 text-emerald-300' 
+              : 'bg-blue-500/15 border-blue-400/40 text-blue-200'
+          }`}
+          title="Ketuk untuk ubah mode anonim"
+        >
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>{isAnonymous ? "Anonim Aktif" : "Akun Dewi"}</span>
+        </button>
 
       </div>
 
       {/* ======================================================== */}
-      {/* 3. SUB-HEADER: Identitas Chat Bot / Satgas               */}
+      {/* 3. PROFILE BANNER                                        */}
       {/* ======================================================== */}
       {activeRoom === 'chatbot' ? (
-        <div className="px-5 py-2.5 flex items-center justify-between border-b border-[#25457d] bg-[#1A325C] shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-[#F5A623] flex items-center justify-center text-slate-900 shadow-md shrink-0">
-              <Bot className="w-6 h-6 text-slate-900 stroke-[2.2]" />
-            </div>
-            <div>
-              <h3 className="text-sm font-black text-white tracking-wide">
-                Chat Bot
-              </h3>
-              <div className="flex items-center space-x-1.5 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-[10px] font-semibold text-emerald-300">
-                  Online 24 Jam
-                </span>
-              </div>
-            </div>
+        <div className="px-5 py-3.5 bg-[#162a4d]/80 border-b border-[#2b4c85] flex items-center space-x-3 shrink-0">
+          <div className="w-11 h-11 rounded-full bg-[#F5A623] flex items-center justify-center text-slate-950 shadow-md">
+            <Bot className="w-6 h-6 stroke-[2.2]" />
           </div>
-
-          <span className="text-[10px] text-blue-200/70 font-medium">
-            {isAnonymous ? '🔒 Privasi Anonim Terjaga' : '👤 Sesi Akun Mahasiswa'}
-          </span>
+          <div>
+            <h3 className="text-sm font-extrabold text-white">Chat Bot UTDI</h3>
+            <span className="flex items-center text-[10px] text-emerald-400 font-semibold mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+              Online 24 Jam
+            </span>
+          </div>
         </div>
       ) : (
-        <div className="px-5 py-2.5 flex items-center justify-between border-b border-[#25457d] bg-[#1A325C] shrink-0">
+        <div className="px-5 py-3 bg-[#162a4d]/80 border-b border-[#2b4c85] flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center shrink-0 shadow">
-              <img src="/assets/satgas-ppks.jpg" alt="Satgas" className="w-full h-full object-contain rounded-full" />
+            <div className="w-10 h-10 rounded-full border-2 border-[#F5A623] overflow-hidden bg-white/10 shrink-0">
+              <img
+                src="/assets/satgas-ppks.jpg"
+                alt="Satgas"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
-              <h3 className="text-sm font-black text-white tracking-wide">
-                {currentSatgas?.name}
-              </h3>
-              <div className="flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-[10px] font-semibold text-emerald-300">
-                  Konselor Siaga
-                </span>
-              </div>
+              <h3 className="text-xs sm:text-sm font-extrabold text-white">{currentSatgas?.name}</h3>
+              <span className="text-[10px] text-emerald-400 flex items-center font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
+                Siaga Mendampingi
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-2">
             <a
               href={`https://wa.me/${currentSatgas?.wa}`}
               target="_blank"
@@ -399,9 +411,20 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
                     : 'bg-[#F5A623] text-slate-950 font-bold rounded-tr-sm shadow-[#F5A623]/20'
                 }`}
               >
-                <p className="whitespace-pre-line">{m.text}</p>
+                {/* Image Attachment Preview */}
+                {m.attachmentUrl && (
+                  <div className="mb-2 rounded-xl overflow-hidden border border-black/20 bg-black/10">
+                    <img
+                      src={m.attachmentUrl}
+                      alt="Attachment"
+                      className="w-full max-h-44 object-cover"
+                    />
+                  </div>
+                )}
 
-                {/* 4 Satgas Options inside Bot message (matching konsultasi 3) */}
+                {m.text && <p className="whitespace-pre-line">{m.text}</p>}
+
+                {/* 4 Satgas Options inside Bot message */}
                 {m.showOptions && (
                   <div className="mt-3.5 space-y-2 pt-2 border-t border-[#2b4c85]">
                     {[
@@ -440,9 +463,26 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ======================================================== */}
-      {/* 5. QUICK SUGGESTION CHIPS                                */}
-      {/* ======================================================== */}
+      {/* Attachment Upload Preview Banner */}
+      {attachedImage && (
+        <div className="px-4 py-2 bg-[#122340] border-t border-[#2b4c85] flex items-center justify-between shrink-0">
+          <div className="flex items-center space-x-2">
+            <img src={attachedImage} alt="Attachment" className="w-10 h-10 rounded-lg object-cover border border-[#F5A623]" />
+            <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Foto Siap Dikirim ke Satgas
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAttachedImage(null)}
+            className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Quick Suggestion Chips */}
       {activeRoom === 'chatbot' && (
         <div className="px-4 py-1.5 bg-[#162a4d] flex space-x-2 overflow-x-auto border-t border-[#2b4c85] scrollbar-none shrink-0">
           <button
@@ -462,10 +502,33 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
         </div>
       )}
 
-      {/* ======================================================== */}
-      {/* 6. BOTTOM INPUT BAR                                      */}
-      {/* ======================================================== */}
+      {/* Hidden File Input for Storage Upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleAttachmentSelect}
+        className="hidden"
+      />
+
+      {/* Bottom Input Bar */}
       <div className="p-3 bg-[#162a4d] border-t border-[#2b4c85] flex items-center space-x-2 shrink-0">
+        
+        {/* Paperclip / Storage Attachment Button */}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploadingAttachment}
+          className="w-9 h-9 rounded-full bg-[#112140] hover:bg-[#1a3361] border border-[#2b4c85] text-slate-300 hover:text-[#F5A623] flex items-center justify-center transition active:scale-90 shrink-0 cursor-pointer shadow"
+          title="Lampirkan foto/screenshot via Storage"
+        >
+          {isUploadingAttachment ? (
+            <span className="w-4 h-4 border-2 border-[#F5A623] border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            <Paperclip className="w-4 h-4" />
+          )}
+        </button>
+
         <input
           type="text"
           value={inputText}
