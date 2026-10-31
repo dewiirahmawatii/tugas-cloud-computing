@@ -10,6 +10,7 @@ export default function ProfilScreen({
   user: initialUser, 
   onLogout,
   onBack,
+  onUpdateUser,
   initialView = 'main' // 'main', 'pengaturan', 'ganti-sandi', 'privasi', 'edit-bio'
 }) {
   const [view, setView] = useState(initialView);
@@ -24,6 +25,23 @@ export default function ProfilScreen({
     alamat: "Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY",
     avatar: "/assets/dewi-avatar.jpg"
   });
+
+  // Sync with initialUser prop changes
+  useEffect(() => {
+    if (initialUser) {
+      setCurrentUser(initialUser);
+    }
+  }, [initialUser]);
+
+  // Fetch latest user from backend on mount so Biznet GIO photo is immediately visible
+  useEffect(() => {
+    api.getMe().then(res => {
+      if (res && res.user) {
+        setCurrentUser(res.user);
+        if (onUpdateUser) onUpdateUser(res.user);
+      }
+    });
+  }, []);
 
   // Storage / Avatar Upload state
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
@@ -86,8 +104,10 @@ export default function ProfilScreen({
       if (uploadRes && uploadRes.url) {
         // Save new avatar to user profile in backend
         const updateRes = await api.updateProfile({ avatar: uploadRes.url });
-        setCurrentUser(prev => ({ ...prev, avatar: uploadRes.url }));
-        showToast("Foto profil tersimpan di storage!");
+        const updatedUser = updateRes?.user || { ...currentUser, avatar: uploadRes.url };
+        setCurrentUser(updatedUser);
+        if (onUpdateUser) onUpdateUser(updatedUser);
+        showToast("Foto profil tersimpan di Biznet GIO!");
       }
     } catch (err) {
       console.error("Gagal mengunggah foto profil:", err);
@@ -102,19 +122,21 @@ export default function ProfilScreen({
     e.preventDefault();
     setIsSavingBio(true);
     try {
-      await api.updateProfile({
+      const res = await api.updateProfile({
         name: editName,
         phone: editPhone,
         email: editEmail,
         alamat: editAlamat
       });
-      setCurrentUser(prev => ({
-        ...prev,
+      const updatedUser = res?.user || {
+        ...currentUser,
         name: editName,
         phone: editPhone,
         email: editEmail,
         alamat: editAlamat
-      }));
+      };
+      setCurrentUser(updatedUser);
+      if (onUpdateUser) onUpdateUser(updatedUser);
       showToast("Data profil mahasiswa berhasil disimpan!");
       setView('main');
     } catch (err) {

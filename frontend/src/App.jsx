@@ -220,6 +220,7 @@ export default function App() {
           {currentScreen === 'profil' && (
             <ProfilScreen
               user={user}
+              onUpdateUser={(updated) => setUser(updated)}
               initialView="main"
               onBack={() => navigateTo('home')}
               onLogout={() => {
@@ -233,6 +234,7 @@ export default function App() {
           {currentScreen === 'pengaturan-akun' && (
             <ProfilScreen
               user={user}
+              onUpdateUser={(updated) => setUser(updated)}
               initialView="pengaturan"
               onBack={() => navigateTo('profil')}
               onLogout={() => {
@@ -246,6 +248,7 @@ export default function App() {
           {currentScreen === 'ganti-sandi' && (
             <ProfilScreen
               user={user}
+              onUpdateUser={(updated) => setUser(updated)}
               initialView="ganti-sandi"
               onBack={() => navigateTo('pengaturan-akun')}
               onLogout={() => {
@@ -259,6 +262,7 @@ export default function App() {
           {currentScreen === 'privasi-keamanan' && (
             <ProfilScreen
               user={user}
+              onUpdateUser={(updated) => setUser(updated)}
               initialView="privasi"
               onBack={() => navigateTo('profil')}
               onLogout={() => {
@@ -272,6 +276,7 @@ export default function App() {
           {currentScreen === 'edit-profil' && (
             <EditProfilScreen
               user={user}
+              onUpdateUser={(updated) => setUser(updated)}
               onBack={() => navigateTo('profil')}
               onSaveSuccess={(msg) => {
                 setSuccessMessage(msg);

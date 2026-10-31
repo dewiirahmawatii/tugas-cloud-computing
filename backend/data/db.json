@@ -10,7 +10,7 @@
     "email": "dewi.rahmawati24@students.utdi.ac.id",
     "phone": "0812-2456-7890",
     "alamat": "Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY",
-    "avatar": "/assets/dewi-avatar.jpg",
+    "avatar": "https://nos.jkt-1.neo.id/utdi-care-storage/utdi-uploads/1793476735254-WhatsApp_Image_2026-07-05_at_19.21.34.jpeg",
     "emergencyContacts": [
       {
         "id": "ec_1",
@@ -181,6 +181,82 @@
   ],
   "sosReports": [
     {
+      "id": "REP-501356",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 03.11 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-10-31T20:11:41.356Z"
+    },
+    {
+      "id": "REP-500248",
+      "userId": "usr_utdi_24001",
+      "type": "Sinyal Darurat Segera",
+      "title": "Laporan Sinyal Darurat Segera",
+      "location": "Kampus UTDI - Gedung Lab 3",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Pemicuan langsung tanpa menunggu hitung mundur.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 03.11 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-10-31T20:11:40.248Z"
+    },
+    {
+      "id": "REP-772623",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 02.59 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-10-31T19:59:32.624Z"
+    },
+    {
+      "id": "REP-772156",
+      "userId": "usr_utdi_24001",
+      "type": "Sinyal Darurat Segera",
+      "title": "Laporan Sinyal Darurat Segera",
+      "location": "Kampus UTDI - Gedung Lab 3",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Pemicuan langsung tanpa menunggu hitung mundur.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 02.59 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-10-31T19:59:32.156Z"
+    },
+    {
       "id": "REP-030602",
       "userId": "usr_utdi_24001",
       "type": "Medis",
@@ -262,6 +338,22 @@
         "text": "Halo, ada yang bisa kami bantu?",
         "timestamp": "10:00 WIB",
         "createdAt": "2026-10-31T16:01:13.014Z"
+      },
+      {
+        "id": "msg_1793476832658",
+        "sender": "user",
+        "text": "Saya ingin curhat",
+        "isAnonymous": false,
+        "attachmentUrl": null,
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:32.654Z"
+      },
+      {
+        "id": "reply_1793476832660",
+        "sender": "bot",
+        "text": "Halo! Saya asisten virtual UTDI Care. Apakah ada kendala atau informasi satgas yang bisa saya bantu arahkan?",
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:33.261Z"
       }
     ],
     "satgas-pusat": [
@@ -280,6 +372,38 @@
         "text": "Hai Hari ini Satgas Dewi di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️",
         "timestamp": "10:10 WIB",
         "createdAt": "2026-10-31T16:01:13.014Z"
+      },
+      {
+        "id": "msg_1793476838262",
+        "sender": "user",
+        "text": "haiiii",
+        "isAnonymous": false,
+        "attachmentUrl": null,
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:38.261Z"
+      },
+      {
+        "id": "reply_1793476838263",
+        "sender": "satgas",
+        "text": "Hai! Terima kasih sudah berani bercerita ke Dewi. Kamu sangat berani dan tidak sendiri. Ceritakan pelan-pelan ya, aku mendengarkan.",
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:38.862Z"
+      },
+      {
+        "id": "msg_1793476847102",
+        "sender": "user",
+        "text": "aku mau curhat bleh ga ",
+        "isAnonymous": false,
+        "attachmentUrl": null,
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:47.101Z"
+      },
+      {
+        "id": "reply_1793476847103",
+        "sender": "satgas",
+        "text": "Hai! Terima kasih sudah berani bercerita ke Dewi. Kamu sangat berani dan tidak sendiri. Ceritakan pelan-pelan ya, aku mendengarkan.",
+        "timestamp": "03.00 WIB",
+        "createdAt": "2026-10-31T20:00:47.702Z"
       }
     ],
     "satgas-abel": [

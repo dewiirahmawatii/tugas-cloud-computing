@@ -1,24 +1,57 @@
-import React, { useState } from 'react';
-import { User, Phone, Mail, MapPin, Save, Camera } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { User, Phone, Mail, MapPin, Save, Camera, RefreshCw, Check } from 'lucide-react';
 import HeaderBar from '../common/HeaderBar';
+import { api } from '../../services/api';
 
-export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
+export default function EditProfilScreen({ user, onBack, onSaveSuccess, onUpdateUser }) {
   const [formData, setFormData] = useState({
-    name: user?.name || 'Ahmad Fauzi',
-    phone: user?.phone || '0812-3456-7890',
-    email: user?.email || 'ahmad.fauzi@students.utdi.ac.id',
-    alamat: user?.alamat || 'Jl. Karang Jambe No. 18, Banguntapan, Bantul, DIY',
-    prodi: user?.prodi || 'S1 Informatika'
+    name: user?.name || 'Dewi',
+    phone: user?.phone || '0812-2456-7890',
+    email: user?.email || 'dewi.rahmawati24@students.utdi.ac.id',
+    alamat: user?.alamat || 'Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY',
+    prodi: user?.prodi || 'S1 Informatika',
+    avatar: user?.avatar || '/assets/dewi-avatar.jpg'
   });
+  
   const [loading, setLoading] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  // Upload photo to Biznet GIO storage
+  const handlePhotoSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingPhoto(true);
+    try {
+      const uploadRes = await api.uploadFile(file);
+      if (uploadRes && uploadRes.url) {
+        setFormData(prev => ({ ...prev, avatar: uploadRes.url }));
+        await api.updateProfile({ avatar: uploadRes.url });
+        if (onUpdateUser) {
+          onUpdateUser({ ...user, avatar: uploadRes.url });
+        }
+      }
+    } catch (err) {
+      console.error('Gagal mengunggah foto profil:', err);
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.updateProfile(formData);
+      const updated = res?.user || { ...user, ...formData };
+      if (onUpdateUser) onUpdateUser(updated);
       setLoading(false);
-      onSaveSuccess("Profil mahasiswa berhasil diperbarui!");
-    }, 500);
+      onSaveSuccess("Profil mahasiswa berhasil diperbarui di server!");
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,26 +62,43 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
         <HeaderBar title="Ubah Data Profil (Pe...)" showBack={true} onBack={onBack} />
       </div>
 
+      {/* Hidden File Input for Storage Upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handlePhotoSelect}
+        className="hidden"
+      />
+
       {/* Scrollable Body */}
       <div className="flex-1 overflow-y-auto min-h-0 pb-6">
 
         {/* Avatar change banner */}
         <div className="flex flex-col items-center py-4">
-          <div className="relative">
+          <div className="relative cursor-pointer group" onClick={() => fileInputRef.current?.click()}>
             <img
-              src={user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80"}
+              src={formData.avatar || "/assets/dewi-avatar.jpg"}
               alt="Avatar"
-              className="w-20 h-20 rounded-full object-cover border-2 border-blue-400 shadow-xl"
+              className="w-20 h-20 rounded-full object-cover border-2 border-[#F5A623] shadow-xl group-hover:opacity-90"
             />
             <button
               type="button"
-              onClick={() => alert("Fitur ambil foto kamera siap.")}
-              className="absolute bottom-0 right-0 w-7 h-7 bg-blue-600 rounded-full border-2 border-[#070d1a] flex items-center justify-center text-white shadow hover:bg-blue-500"
+              className="absolute bottom-0 right-0 w-7 h-7 bg-[#F5A623] hover:bg-amber-400 rounded-full border-2 border-[#1E3866] flex items-center justify-center text-slate-900 shadow transition active:scale-90"
+              title="Ganti Foto Profil ke Biznet GIO"
             >
-              <Camera className="w-3.5 h-3.5" />
+              {isUploadingPhoto ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Camera className="w-3.5 h-3.5 stroke-[2.5]" />
+              )}
             </button>
           </div>
-          <span className="text-[11px] text-slate-400 mt-2">NIM: {user?.nim || '215410089'} (Tetap)</span>
+          <span className="text-[11px] text-slate-300 font-semibold mt-2">NIM: {user?.nim || '245410024'}</span>
+          <span className="text-[10px] text-blue-300 flex items-center gap-1 mt-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Tersimpan di Biznet GIO Cloud Storage
+          </span>
         </div>
 
         {/* Edit Form */}
@@ -63,7 +113,7 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#F5A623]"
               />
             </div>
           </div>
@@ -77,13 +127,13 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#F5A623]"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold text-slate-300">Email Mahasiswa</label>
+            <label className="text-[11px] font-semibold text-slate-300">Email Mahasiswa UTDI</label>
             <div className="relative flex items-center mt-1">
               <Mail className="w-3.5 h-3.5 text-blue-400 absolute left-3" />
               <input
@@ -91,7 +141,7 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#F5A623]"
               />
             </div>
           </div>
@@ -104,7 +154,7 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
                 rows={2}
                 value={formData.alamat}
                 onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
-                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                className="w-full bg-[#0f1f3d] border border-blue-900/60 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#F5A623] resize-none"
               />
             </div>
           </div>
@@ -113,7 +163,7 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 transition"
+              className="w-full bg-[#F5A623] hover:bg-amber-400 text-slate-900 font-extrabold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-lg transition active:scale-95"
             >
               <Save className="w-4 h-4" />
               <span className="text-xs">{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
@@ -123,11 +173,10 @@ export default function EditProfilScreen({ user, onBack, onSaveSuccess }) {
         </form>
       </div>
 
-      <div className="px-5 text-center text-[10px] text-slate-500">
-        Data ini disinkronkan dengan Sistem Informasi Akademik UTDI
+      <div className="px-5 text-center text-[10px] text-slate-400">
+        Data ini disinkronkan langsung dengan Server UTDI & Biznet GIO
       </div>
 
     </div>
   );
 }
-
