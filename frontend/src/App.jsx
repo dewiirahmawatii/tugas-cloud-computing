@@ -30,7 +30,7 @@ export default function App() {
   // Navigation State
   const [currentScreen, setCurrentScreen] = useState('splash');
   const [activeTab, setActiveTab] = useState('home');
-  const [deviceMode, setDeviceMode] = useState('iphone'); // 'iphone' or 'full'
+  const [deviceMode, setDeviceMode] = useState('iphone');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // App Data State
@@ -53,14 +53,16 @@ export default function App() {
   const navigateTo = (screenId) => {
     if (soundEnabled) playBeep(900, 0.05);
 
-    // Stop sirens if leaving SOS screen
     if (currentScreen === 'live-sos' && screenId !== 'live-sos') {
       stopSosSiren();
     }
 
-    // Set tab if switching to a primary tab
-    if (['home', 'riwayat', 'profil'].includes(screenId)) {
-      setActiveTab(screenId);
+    if (['home', 'riwayat', 'profil', 'pengaturan-akun', 'ganti-sandi', 'privasi-keamanan'].includes(screenId)) {
+      if (['profil', 'pengaturan-akun', 'ganti-sandi', 'privasi-keamanan'].includes(screenId)) {
+        setActiveTab('profil');
+      } else {
+        setActiveTab(screenId);
+      }
     }
     setCurrentScreen(screenId);
   };
@@ -117,8 +119,15 @@ export default function App() {
     setCurrentScreen('chat-room');
   };
 
-  // Check if current screen is one of the main 3 bottom nav screens
-  const showBottomNav = ['home', 'riwayat', 'profil'].includes(currentScreen);
+  // Check if current screen shows bottom nav bar
+  const showBottomNav = [
+    'home', 
+    'riwayat', 
+    'profil', 
+    'pengaturan-akun', 
+    'ganti-sandi', 
+    'privasi-keamanan'
+  ].includes(currentScreen);
 
   return (
     <DeviceFrame
@@ -187,20 +196,21 @@ export default function App() {
           />
         )}
 
-        {/* Screen 7: Riwayat */}
+        {/* Screen 7: Riwayat Pelaporan */}
         {currentScreen === 'riwayat' && (
           <RiwayatScreen
+            onBack={() => navigateTo('home')}
             onSelectReport={(report) => {
               setActiveSosReport(report);
             }}
           />
         )}
 
-        {/* Screen 8: Profil */}
+        {/* Screen 8: Profil (Dewi - Main) */}
         {currentScreen === 'profil' && (
           <ProfilScreen
             user={user}
-            onNavigate={navigateTo}
+            initialView="main"
             onLogout={() => {
               stopSosSiren();
               navigateTo('login');
@@ -208,7 +218,43 @@ export default function App() {
           />
         )}
 
-        {/* Profile Sub-screens */}
+        {/* Screen 9: Pengaturan Akun */}
+        {currentScreen === 'pengaturan-akun' && (
+          <ProfilScreen
+            user={user}
+            initialView="pengaturan"
+            onLogout={() => {
+              stopSosSiren();
+              navigateTo('login');
+            }}
+          />
+        )}
+
+        {/* Screen 10: Ubah Kata Sandi (ganti sandi) */}
+        {currentScreen === 'ganti-sandi' && (
+          <ProfilScreen
+            user={user}
+            initialView="ganti-sandi"
+            onLogout={() => {
+              stopSosSiren();
+              navigateTo('login');
+            }}
+          />
+        )}
+
+        {/* Screen 11: Privasi dan Keamanan */}
+        {currentScreen === 'privasi-keamanan' && (
+          <ProfilScreen
+            user={user}
+            initialView="privasi"
+            onLogout={() => {
+              stopSosSiren();
+              navigateTo('login');
+            }}
+          />
+        )}
+
+        {/* Legacy Profile Sub-screens */}
         {currentScreen === 'edit-profil' && (
           <EditProfilScreen
             user={user}

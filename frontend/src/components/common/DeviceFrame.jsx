@@ -11,24 +11,24 @@ export default function DeviceFrame({
   onSetDeviceMode 
 }) {
   const screensList = [
-    { id: 'splash', label: '1. On Boarding 1 (Logo UTDI)', group: 'Onboarding' },
-    { id: 'onboarding2', label: '2. On Boarding 2 (Teks PPKPS)', group: 'Onboarding' },
-    { id: 'onboarding3', label: '3. On Boarding 3 (Logo PPKS + Teks)', group: 'Onboarding' },
-    { id: 'login', label: '4. Login (Masuk)', group: 'Auth' },
-    { id: 'register', label: '5. Buat Akun (Register)', group: 'Auth' },
-    { id: 'home', label: '6. Beranda (Home)', group: 'Main' },
-    { id: 'riwayat', label: '7. Riwayat Laporan', group: 'Main' },
-    { id: 'profil', label: '8. Profil Mahasiswa', group: 'Main' },
-    { id: 'nomor-darurat', label: '9. Nomor Darurat (nor...)', group: 'Fitur' },
-    { id: 'lapor-darurat', label: '10. Peta & Lapor SOS (Da...)', group: 'Fitur' },
-    { id: 'live-sos', label: '11. Tracking Tim SAR (Dar...)', group: 'Fitur' },
-    { id: 'konselor-list', label: '12. Daftar Konselor (kon...)', group: 'Fitur' },
-    { id: 'chat-room', label: '13. Chat Room Konseling', group: 'Fitur' },
-    { id: 'voice-call', label: '14. Panggilan Suara Konselor', group: 'Fitur' },
-    { id: 'informasi-list', label: '15. Panduan & Edukasi (Inf...)', group: 'Fitur' },
-    { id: 'edit-profil', label: '16. Edit Profil (Pe...)', group: 'Profil' },
-    { id: 'ganti-password', label: '17. Ganti Kata Sandi (ga...)', group: 'Profil' },
-    { id: 'kontak-darurat', label: '18. Kontak Darurat Saya (Ko...)', group: 'Profil' },
+    { id: 'splash', label: '1. On Boarding 1 (Logo UTDI)' },
+    { id: 'onboarding2', label: '2. On Boarding 2 (Teks PPKPS)' },
+    { id: 'onboarding3', label: '3. On Boarding 3 (Logo PPKS + Teks)' },
+    { id: 'login', label: '4. Login (Masuk)' },
+    { id: 'register', label: '5. Buat Akun (Register)' },
+    { id: 'home', label: '6. Home (Beranda)' },
+    { id: 'riwayat', label: '7. Riwayat Pelaporan' },
+    { id: 'profil', label: '8. Profil (Dewi)' },
+    { id: 'pengaturan-akun', label: '9. Pengaturan Akun' },
+    { id: 'ganti-sandi', label: '10. Ubah Kata Sandi' },
+    { id: 'privasi-keamanan', label: '11. Privasi dan Keamanan' },
+    { id: 'nomor-darurat', label: '12. Kontak Darurat (nor...)' },
+    { id: 'lapor-darurat', label: '13. Peta & Lapor SOS (Da...)' },
+    { id: 'live-sos', label: '14. Tracking Tim SAR (Dar...)' },
+    { id: 'konselor-list', label: '15. Daftar Konselor (kon...)' },
+    { id: 'chat-room', label: '16. Chat Room Konseling' },
+    { id: 'voice-call', label: '17. Panggilan Suara Konselor' },
+    { id: 'informasi-list', label: '18. Panduan Edukasi (Inf...)' },
   ];
 
   return (
@@ -40,7 +40,7 @@ export default function DeviceFrame({
         {/* Brand identity */}
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-lg">
-            <img src="/assets/utdi-logo.png" alt="UTDI" className="w-full h-full object-contain" />
+            <img src="/assets/satgas-ppks.jpg" alt="Satgas PPKS" className="w-full h-full object-contain" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
@@ -123,7 +123,7 @@ export default function DeviceFrame({
               <div className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></div>
             </div>
 
-            {/* Mobile Screen Content with Consistent #1E3866 Background */}
+            {/* Mobile Screen Content */}
             <div className="w-full h-full overflow-y-auto overflow-x-hidden flex flex-col bg-[#1E3866] relative pt-8 pb-4">
               {children}
             </div>
