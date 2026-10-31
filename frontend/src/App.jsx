@@ -369,6 +369,7 @@ export default function App() {
             <InformasiListScreen
               onBack={() => navigateTo('home')}
               onNavigateEmergency={() => navigateTo('nomor-darurat')}
+              onNavigateConsultation={() => navigateTo('konsultasi')}
             />
           )}
 
