@@ -5,60 +5,80 @@
  * Portal: https://portal.biznetgio.com
  */
 
-import { S3Client, PutObjectCommand, HeadBucketCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, HeadBucketCommand, ListBucketsCommand } from '@aws-sdk/client-s3';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Konfigurasi Biznet GIO NEO Object Storage
+// Explicitly load .env from backend directory and workspace root
+dotenv.config({ path: path.join(__dirname, '.env'), override: true });
+dotenv.config({ path: path.join(process.cwd(), '.env'), override: true });
+
+// Dynamic configuration object with getters
 export const biznetConfig = {
-  endpoint: process.env.BIZNET_GIO_ENDPOINT || 'https://nos.jkt-1.neo.id',
-  region: process.env.BIZNET_GIO_REGION || 'jkt-1',
-  accessKeyId: process.env.BIZNET_GIO_ACCESS_KEY || '',
-  secretAccessKey: process.env.BIZNET_GIO_SECRET_KEY || '',
-  bucket: process.env.BIZNET_GIO_BUCKET || 'utdi-care',
-  // Flag apakah kredensial sudah diisi oleh mahasiswa
+  get endpoint() {
+    return process.env.BIZNET_GIO_ENDPOINT || 'https://nos.jkt-1.neo.id';
+  },
+  get region() {
+    return process.env.BIZNET_GIO_REGION || 'jkt-1';
+  },
+  get accessKeyId() {
+    return process.env.BIZNET_GIO_ACCESS_KEY || '';
+  },
+  get secretAccessKey() {
+    return process.env.BIZNET_GIO_SECRET_KEY || '';
+  },
+  get bucket() {
+    return process.env.BIZNET_GIO_BUCKET || 'utdi-care-storage';
+  },
   get isConfigured() {
+    const key = this.accessKeyId.trim();
+    const secret = this.secretAccessKey.trim();
     return Boolean(
-      this.accessKeyId && 
-      this.secretAccessKey && 
-      this.accessKeyId !== 'MASUKKAN_ACCESS_KEY_BIZNET_GIO_DISINI'
+      key && 
+      secret && 
+      key !== 'MASUKKAN_ACCESS_KEY_BIZNET_GIO_DISINI' &&
+      !key.includes('MASUKKAN')
     );
   }
 };
 
-let s3Client = null;
+let cachedS3Client = null;
+let lastAccessKey = '';
+let lastSecretKey = '';
 
 export function getBiznetS3Client() {
   if (!biznetConfig.isConfigured) return null;
 
-  if (!s3Client) {
-    s3Client = new S3Client({
+  // Re-create client if credentials changed
+  if (!cachedS3Client || lastAccessKey !== biznetConfig.accessKeyId || lastSecretKey !== biznetConfig.secretAccessKey) {
+    lastAccessKey = biznetConfig.accessKeyId;
+    lastSecretKey = biznetConfig.secretAccessKey;
+
+    cachedS3Client = new S3Client({
       region: biznetConfig.region,
       endpoint: biznetConfig.endpoint,
       credentials: {
         accessKeyId: biznetConfig.accessKeyId,
         secretAccessKey: biznetConfig.secretAccessKey,
       },
-      forcePathStyle: true, // Wajib bernilai true untuk kompatibilitas Ceph/NEO Object Storage Biznet GIO
+      forcePathStyle: true, // Wajib true untuk Ceph/NEO Object Storage Biznet GIO
     });
   }
-  return s3Client;
+  return cachedS3Client;
 }
 
 /**
- * Upload Buffer / File langsung ke Biznet GIO NEO Object Storage
- * @param {Buffer} fileBuffer
- * @param {string} filename
- * @param {string} contentType
- * @returns {Promise<{success: boolean, url: string, provider: string, filename: string}>}
+ * Upload Buffer langsung ke Biznet GIO NEO Object Storage
  */
 export async function uploadToBiznetGio(fileBuffer, filename, contentType = 'image/jpeg') {
   const client = getBiznetS3Client();
   if (!client) {
-    throw new Error('Kredensial Biznet GIO belum dikonfigurasi di file .env');
+    throw new Error('Kredensial Biznet GIO belum lengkap di file .env');
   }
 
   const cleanFilename = `utdi-uploads/${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
@@ -68,13 +88,12 @@ export async function uploadToBiznetGio(fileBuffer, filename, contentType = 'ima
     Key: cleanFilename,
     Body: fileBuffer,
     ContentType: contentType,
-    ACL: 'public-read', // Agar file foto/laporan dapat diakses langsung oleh aplikasi mobile
+    ACL: 'public-read', // Public read agar gambar dapat dimuat di browser & aplikasi mobile APK
   });
 
   await client.send(command);
 
-  // Format URL publik Biznet GIO NEO Object Storage:
-  // https://nos.jkt-1.neo.id/<bucket-name>/<object-key>
+  // Format URL publik Biznet GIO NEO Object Storage
   const endpointBase = biznetConfig.endpoint.replace(/\/+$/, '');
   const publicUrl = `${endpointBase}/${biznetConfig.bucket}/${cleanFilename}`;
 
@@ -92,6 +111,9 @@ export async function uploadToBiznetGio(fileBuffer, filename, contentType = 'ima
  * Tes koneksi ke Biznet GIO
  */
 export async function testBiznetConnection() {
+  // Re-read .env in case user updated it
+  dotenv.config({ path: path.join(__dirname, '.env'), override: true });
+
   if (!biznetConfig.isConfigured) {
     return {
       connected: false,
@@ -115,7 +137,7 @@ export async function testBiznetConnection() {
       connected: false,
       configured: true,
       error: err.message,
-      message: 'Kredensial ada tetapi gagal mengakses bucket Biznet GIO. Periksa nama bucket dan permission.'
+      message: 'Kredensial ada tetapi gagal mengakses bucket Biznet GIO: ' + err.message
     };
   }
 }
