@@ -25,7 +25,7 @@ export default function RegisterScreen({ onRegisterSuccess, onBackToLogin }) {
 
   return (
     <div className="flex-1 flex flex-col justify-between h-full min-h-0 overflow-y-auto px-6 py-4 bg-[#1E3866] text-white select-none">
-      
+
       <div>
         <HeaderBar transparent={true} />
 
@@ -49,7 +49,7 @@ export default function RegisterScreen({ onRegisterSuccess, onBackToLogin }) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3">
-          
+
           {/* Email */}
           <div className="space-y-1">
             <label className="text-[11px] font-semibold text-slate-200">

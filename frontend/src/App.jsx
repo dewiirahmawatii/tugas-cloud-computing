@@ -221,6 +221,7 @@ export default function App() {
             <ProfilScreen
               user={user}
               initialView="main"
+              onBack={() => navigateTo('home')}
               onLogout={() => {
                 stopSosSiren();
                 navigateTo('login');
@@ -233,6 +234,7 @@ export default function App() {
             <ProfilScreen
               user={user}
               initialView="pengaturan"
+              onBack={() => navigateTo('profil')}
               onLogout={() => {
                 stopSosSiren();
                 navigateTo('login');
@@ -245,6 +247,7 @@ export default function App() {
             <ProfilScreen
               user={user}
               initialView="ganti-sandi"
+              onBack={() => navigateTo('pengaturan-akun')}
               onLogout={() => {
                 stopSosSiren();
                 navigateTo('login');
@@ -257,6 +260,7 @@ export default function App() {
             <ProfilScreen
               user={user}
               initialView="privasi"
+              onBack={() => navigateTo('profil')}
               onLogout={() => {
                 stopSosSiren();
                 navigateTo('login');

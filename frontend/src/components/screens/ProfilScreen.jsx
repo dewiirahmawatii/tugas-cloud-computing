@@ -7,6 +7,7 @@ import {
 export default function ProfilScreen({ 
   user, 
   onLogout,
+  onBack,
   initialView = 'main' // 'main', 'pengaturan', 'ganti-sandi', 'privasi'
 }) {
   const [view, setView] = useState(initialView);
@@ -62,10 +63,18 @@ export default function ProfilScreen({
       {view === 'main' && (
         <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
-            <div className="w-9 h-9 rounded-full bg-[#162a4d] border border-[#2b4c85] flex items-center justify-center text-blue-200">
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </div>
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0 relative z-30">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onBack) onBack();
+              }}
+              className="w-10 h-10 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] active:bg-[#254680] border border-[#2b4c85] flex items-center justify-center text-white transition-all active:scale-90 cursor-pointer shadow-md"
+              title="Kembali ke Beranda"
+            >
+              <ArrowLeft className="w-5 h-5 text-white stroke-[2.5]" />
+            </button>
             <h2 className="text-base sm:text-lg font-black text-[#F5A623] tracking-wide">
               Profil
             </h2>
@@ -120,12 +129,21 @@ export default function ProfilScreen({
       {view === 'pengaturan' && (
         <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0 relative z-30">
             <button
-              onClick={() => setView('main')}
-              className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (initialView === 'pengaturan' && onBack) {
+                  onBack();
+                } else {
+                  setView('main');
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] active:bg-[#254680] border border-[#2b4c85] flex items-center justify-center text-white transition-all active:scale-90 cursor-pointer shadow-md"
+              title="Kembali"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white stroke-[2.5]" />
             </button>
             <h2 className="text-base sm:text-lg font-black text-[#F5A623] tracking-wide">
               Pengaturan Akun
@@ -181,12 +199,21 @@ export default function ProfilScreen({
       {view === 'ganti-sandi' && (
         <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden relative">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0 relative z-30">
             <button
-              onClick={() => setView('pengaturan')}
-              className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (initialView === 'ganti-sandi' && onBack) {
+                  onBack();
+                } else {
+                  setView('pengaturan');
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] active:bg-[#254680] border border-[#2b4c85] flex items-center justify-center text-white transition-all active:scale-90 cursor-pointer shadow-md"
+              title="Kembali"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white stroke-[2.5]" />
             </button>
             <h2 className="text-base sm:text-lg font-black text-[#F5A623] tracking-wide">
               Ubah Kata Sandi
@@ -346,12 +373,21 @@ export default function ProfilScreen({
       {view === 'privasi' && (
         <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
           {/* Header */}
-          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0">
+          <div className="px-5 pt-3 pb-3 flex items-center space-x-3 border-b border-[#2b4c85] shrink-0 relative z-30">
             <button
-              onClick={() => setView('main')}
-              className="w-9 h-9 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] border border-[#2b4c85] flex items-center justify-center text-blue-200 transition active:scale-95"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (initialView === 'privasi' && onBack) {
+                  onBack();
+                } else {
+                  setView('main');
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-[#162a4d] hover:bg-[#1f3a69] active:bg-[#254680] border border-[#2b4c85] flex items-center justify-center text-white transition-all active:scale-90 cursor-pointer shadow-md"
+              title="Kembali"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-white stroke-[2.5]" />
             </button>
             <h2 className="text-base sm:text-lg font-black text-[#F5A623] tracking-wide">
               Privasi dan Keamanan
