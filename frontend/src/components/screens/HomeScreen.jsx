@@ -124,7 +124,7 @@ export default function HomeScreen({
 
         {/* --- Bottom Wide Card: Konsultasi --- */}
         <div
-          onClick={() => onNavigate('konselor-list')}
+          onClick={() => onNavigate('konsultasi')}
           className="mt-5 bg-[#162a4d] hover:bg-[#1a335c] border border-[#2b4c85] rounded-2xl p-4 flex items-center space-x-3.5 cursor-pointer shadow-md transition active:scale-98"
         >
           {/* Chat Bubble Icon */}

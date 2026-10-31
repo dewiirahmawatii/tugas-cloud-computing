@@ -23,12 +23,13 @@ export default function DeviceFrame({
     { id: 'ganti-sandi', label: '10. Ubah Kata Sandi' },
     { id: 'privasi-keamanan', label: '11. Privasi dan Keamanan' },
     { id: 'nomor-darurat', label: '12. Kontak Darurat (nor...)' },
-    { id: 'lapor-darurat', label: '13. Peta & Lapor SOS (Da...)' },
-    { id: 'live-sos', label: '14. Tracking Tim SAR (Dar...)' },
-    { id: 'konselor-list', label: '15. Daftar Konselor (kon...)' },
-    { id: 'chat-room', label: '16. Chat Room Konseling' },
-    { id: 'voice-call', label: '17. Panggilan Suara Konselor' },
-    { id: 'informasi-list', label: '18. Panduan Edukasi (Inf...)' },
+    { id: 'konsultasi', label: '13. Konsultasi / Curhat (Chat Bot)' },
+    { id: 'lapor-darurat', label: '14. Peta & Lapor SOS (Da...)' },
+    { id: 'live-sos', label: '15. Tracking Tim SAR (Dar...)' },
+    { id: 'konselor-list', label: '16. Daftar Konselor (kon...)' },
+    { id: 'chat-room', label: '17. Chat Room Konseling' },
+    { id: 'voice-call', label: '18. Panggilan Suara Konselor' },
+    { id: 'informasi-list', label: '19. Panduan Edukasi (Inf...)' },
   ];
 
   return (

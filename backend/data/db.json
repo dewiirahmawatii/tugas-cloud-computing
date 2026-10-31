@@ -220,6 +220,23 @@
   ],
   "sosReports": [
     {
+      "id": "SOS-208431",
+      "userId": "usr_utdi_215410089",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Sinyal Darurat Darurat Seketika (Tombol SOS) - Kampus UTDI - Lab Terpadu Lt. 2",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Dibatalkan Pengguna",
+      "date": "31 Okt 2026, 20.26 WIB",
+      "officer": "Bripka Bambang & Tim Tanggap Keamanan Kampus",
+      "etaMinutes": 3,
+      "createdAt": "2026-10-31T13:26:48.484Z"
+    },
+    {
       "id": "SOS-055459",
       "userId": "usr_utdi_215410089",
       "type": "Darurat Seketika (Tombol SOS)",

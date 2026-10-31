@@ -22,6 +22,7 @@ import ChatRoomScreen from './components/screens/ChatRoomScreen';
 import VoiceCallScreen from './components/screens/VoiceCallScreen';
 import InformasiListScreen from './components/screens/InformasiListScreen';
 import InformasiDetailScreen from './components/screens/InformasiDetailScreen';
+import KonsultasiScreen from './components/screens/KonsultasiScreen';
 
 import { api } from './services/api';
 import { playSosSiren, stopSosSiren, playBeep } from './utils/audio';
@@ -126,7 +127,8 @@ export default function App() {
     'profil', 
     'pengaturan-akun', 
     'ganti-sandi', 
-    'privasi-keamanan'
+    'privasi-keamanan',
+    'konsultasi'
   ].includes(currentScreen);
 
   return (
@@ -282,6 +284,21 @@ export default function App() {
             onBack={() => navigateTo('profil')}
             onSaveSuccess={(msg) => {
               setSuccessMessage(msg);
+            }}
+          />
+        )}
+
+        {/* Screen 12: Konsultasi / Curhat (Chat Bot) */}
+        {currentScreen === 'konsultasi' && (
+          <KonsultasiScreen
+            onBack={() => navigateTo('home')}
+            onStartVoiceCall={(satgas) => {
+              setSelectedCounselor({
+                name: satgas.name,
+                title: satgas.role,
+                avatar: '/assets/satgas-ppks.jpg'
+              });
+              navigateTo('voice-call');
             }}
           />
         )}
