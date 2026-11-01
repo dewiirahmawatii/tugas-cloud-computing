@@ -8,9 +8,9 @@
     "fakultas": "Fakultas Teknologi Informasi",
     "angkatan": "2024",
     "email": "dewi.rahmawati24@students.utdi.ac.id",
-    "phone": "0812-2456-7890",
+    "phone": "085250901027",
     "alamat": "Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY",
-    "avatar": "https://nos.jkt-1.neo.id/utdi-care-storage/utdi-uploads/1793476735254-WhatsApp_Image_2026-07-05_at_19.21.34.jpeg",
+    "avatar": "https://nos.jkt-1.neo.id/utdi-care-storage/utdi-uploads/1793528518818-WhatsApp_Image_2026-07-05_at_19.21.34.jpeg",
     "emergencyContacts": [
       {
         "id": "ec_1",
@@ -52,9 +52,9 @@
       "id": "en_2",
       "category": "ppks",
       "title": "Satgas PPKS UTDI",
-      "phone": "0811-2555-7788",
-      "whatsapp": "081125557788",
-      "description": "Pencegahan & Penanganan Kekerasan Seksual (Kerahasiaan 100% Terjamin).",
+      "phone": "0823-1778-9406",
+      "whatsapp": "082317789406",
+      "description": "Pencegahan & Penanganan Kekerasan Seksual (Satgas Dewi - Siaga 24 Jam).",
       "badge": "Paling Rahasia",
       "isPrimary": true
     },
@@ -72,8 +72,8 @@
       "id": "en_4",
       "category": "medis",
       "title": "Layanan Bimbingan Konseling UTDI",
-      "phone": "0812-2900-5522",
-      "whatsapp": "081229005522",
+      "phone": "0823-1778-9406",
+      "whatsapp": "082317789406",
       "description": "Dukungan konseling psikologis dan pendampingan mental mahasiswa.",
       "badge": "Gratis",
       "isPrimary": false
@@ -180,6 +180,139 @@
     }
   ],
   "sosReports": [
+    {
+      "id": "REP-827856",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Dibatalkan Pengguna",
+      "statusColor": "bg-slate-500",
+      "date": "1 Nov 2026, 19.23 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T12:23:47.856Z"
+    },
+    {
+      "id": "REP-826252",
+      "userId": "usr_utdi_24001",
+      "type": "Sinyal Darurat Segera",
+      "title": "Laporan Sinyal Darurat Segera",
+      "location": "Kampus UTDI - Gedung Lab 3",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Pemicuan langsung tanpa menunggu hitung mundur.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 19.23 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T12:23:46.252Z"
+    },
+    {
+      "id": "REP-795970",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 19.23 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T12:23:15.970Z"
+    },
+    {
+      "id": "REP-794586",
+      "userId": "usr_utdi_24001",
+      "type": "Sinyal Darurat Segera",
+      "title": "Laporan Sinyal Darurat Segera",
+      "location": "Kampus UTDI - Gedung Lab 3",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Pemicuan langsung tanpa menunggu hitung mundur.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 19.23 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T12:23:14.586Z"
+    },
+    {
+      "id": "REP-234737",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Dibatalkan Pengguna",
+      "statusColor": "bg-slate-500",
+      "date": "1 Nov 2026, 19.13 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T12:13:54.737Z"
+    },
+    {
+      "id": "REP-470667",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Sedang Ditangani",
+      "statusColor": "bg-amber-500",
+      "date": "1 Nov 2026, 17.21 WIB",
+      "officer": "Satgas Dewi & Danru Security UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T10:21:10.667Z"
+    },
+    {
+      "id": "REP-634947",
+      "userId": "usr_utdi_24001",
+      "type": "Darurat Seketika (Tombol SOS)",
+      "title": "Laporan Darurat Seketika (Tombol SOS)",
+      "location": "Kampus UTDI - Lab Terpadu Lt. 2",
+      "coordinates": {
+        "lat": -7.7942,
+        "lng": 110.4079
+      },
+      "note": "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi.",
+      "status": "Petugas Menuju Lokasi",
+      "statusColor": "bg-red-500",
+      "date": "1 Nov 2026, 17.07 WIB",
+      "officer": "Bripka Agus & Danru Security Pos Utama UTDI",
+      "photoUrl": null,
+      "etaMinutes": 3,
+      "createdAt": "2026-11-01T10:07:14.947Z"
+    },
     {
       "id": "REP-501356",
       "userId": "usr_utdi_24001",
@@ -354,6 +487,175 @@
         "text": "Halo! Saya asisten virtual UTDI Care. Apakah ada kendala atau informasi satgas yang bisa saya bantu arahkan?",
         "timestamp": "03.00 WIB",
         "createdAt": "2026-10-31T20:00:33.261Z"
+      },
+      {
+        "id": "msg_1793529144360",
+        "sender": "user",
+        "text": "iya saya mau curhat ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:24.332Z"
+      },
+      {
+        "id": "reply_1793529144361",
+        "sender": "bot",
+        "text": "Semua sesi konsultasi di UTDI Care terjamin kerahasiaannya dengan perlindungan hukum kampus penuh.",
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:24.960Z"
+      },
+      {
+        "id": "msg_1793534607829",
+        "sender": "user",
+        "text": "Saya ingin curhat",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.03 WIB",
+        "createdAt": "2026-11-01T12:03:27.829Z"
+      },
+      {
+        "id": "reply_1793534607831",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Tentu saja boleh banget! Ruang ini aman dan rahasia 100%. Ceritain aja apa yang kamu rasakan, Dewi ada buat dengerin kamu ❤️",
+        "timestamp": "19.03 WIB",
+        "createdAt": "2026-11-01T12:03:28.431Z"
+      },
+      {
+        "id": "msg_1793534615208",
+        "sender": "user",
+        "text": "halloo kak dewi ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.03 WIB",
+        "createdAt": "2026-11-01T12:03:35.208Z"
+      },
+      {
+        "id": "reply_1793534615210",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Untuk bantuan darurat cepat, Anda bisa menekan tombol SOS atau memilih hotline Satgas PPKS di menu layanan.",
+        "timestamp": "19.03 WIB",
+        "createdAt": "2026-11-01T12:03:35.810Z"
+      },
+      {
+        "id": "msg_1793535167539",
+        "sender": "user",
+        "text": "Saya ingin curhat",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.12 WIB",
+        "createdAt": "2026-11-01T12:12:47.537Z"
+      },
+      {
+        "id": "reply_1793535167540",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Tentu saja boleh banget! Ruang ini aman dan rahasia 100%. Ceritain aja apa yang kamu rasakan, Dewi ada buat dengerin kamu ❤️",
+        "timestamp": "19.12 WIB",
+        "createdAt": "2026-11-01T12:12:48.139Z"
+      },
+      {
+        "id": "msg_1793535172688",
+        "sender": "user",
+        "text": "Saya ingin curhat",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.12 WIB",
+        "createdAt": "2026-11-01T12:12:52.687Z"
+      },
+      {
+        "id": "reply_1793535172689",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Boleh banget, ceritakan dari mana saja yang kamu rasa paling nyaman. Dewi siap mendampingi kamu.",
+        "timestamp": "19.12 WIB",
+        "createdAt": "2026-11-01T12:12:53.288Z"
+      },
+      {
+        "id": "msg_1793535185304",
+        "sender": "user",
+        "text": "iyaa",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:05.304Z"
+      },
+      {
+        "id": "reply_1793535185306",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Untuk bantuan darurat cepat, Anda bisa menekan tombol SOS atau memilih hotline Satgas PPKS di menu layanan.",
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:05.905Z"
+      },
+      {
+        "id": "msg_1793535191194",
+        "sender": "user",
+        "text": "iyaa ih ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:11.194Z"
+      },
+      {
+        "id": "reply_1793535191195",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Halo! Saya asisten virtual UTDI Care. Apakah ada kendala atau informasi satgas yang bisa saya bantu arahkan?",
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:11.794Z"
+      },
+      {
+        "id": "msg_1793535200279",
+        "sender": "user",
+        "text": "ada",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:20.278Z"
+      },
+      {
+        "id": "reply_1793535200280",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Untuk bantuan darurat cepat, Anda bisa menekan tombol SOS atau memilih hotline Satgas PPKS di menu layanan.",
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:20.879Z"
+      },
+      {
+        "id": "msg_1793535203673",
+        "sender": "user",
+        "text": "Butuh nomor kontak satgas",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:23.673Z"
+      },
+      {
+        "id": "reply_1793535203674",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Halo! Saya asisten virtual UTDI Care. Apakah ada kendala atau informasi satgas yang bisa saya bantu arahkan?",
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:24.273Z"
+      },
+      {
+        "id": "msg_1793535745124",
+        "sender": "user",
+        "text": "tau gaaa",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.22 WIB",
+        "createdAt": "2026-11-01T12:22:25.110Z"
+      },
+      {
+        "id": "reply_1793535745127",
+        "sender": "bot",
+        "officerName": "Satgas Pusat",
+        "text": "Halo! Saya asisten virtual UTDI Care. Anda dapat langsung memilih Satgas Dewi untuk curhat & pendampingan korban, Satgas Abel untuk konseling psikologis, atau Satgas Putra untuk bantuan keamanan lapangan.",
+        "timestamp": "19.22 WIB",
+        "createdAt": "2026-11-01T12:22:25.726Z"
       }
     ],
     "satgas-pusat": [
@@ -404,6 +706,167 @@
         "text": "Hai! Terima kasih sudah berani bercerita ke Dewi. Kamu sangat berani dan tidak sendiri. Ceritakan pelan-pelan ya, aku mendengarkan.",
         "timestamp": "03.00 WIB",
         "createdAt": "2026-10-31T20:00:47.702Z"
+      },
+      {
+        "id": "msg_1793529154800",
+        "sender": "user",
+        "text": "tau gaaa",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:34.799Z"
+      },
+      {
+        "id": "reply_1793529154801",
+        "sender": "satgas",
+        "text": "Perasaanmu valid. Dewi siap mendampingi proses mediasi atau bimbingan konseling jika kamu menginginkannya❤️",
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:35.400Z"
+      },
+      {
+        "id": "msg_1793529159717",
+        "sender": "user",
+        "text": "ihh ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:39.717Z"
+      },
+      {
+        "id": "reply_1793529159718",
+        "sender": "satgas",
+        "text": "Perasaanmu valid. Dewi siap mendampingi proses mediasi atau bimbingan konseling jika kamu menginginkannya❤️",
+        "timestamp": "17.32 WIB",
+        "createdAt": "2026-11-01T10:32:40.317Z"
+      },
+      {
+        "id": "msg_1793533905221",
+        "sender": "user",
+        "text": "tau gaaa",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "18.51 WIB",
+        "createdAt": "2026-11-01T11:51:45.219Z"
+      },
+      {
+        "id": "reply_1793533905222",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Iya, kenapa tuh? Cerita dong, Dewi dengerin di sini kok! Ada kejadian apa barusan?",
+        "timestamp": "18.51 WIB",
+        "createdAt": "2026-11-01T11:51:45.821Z"
+      },
+      {
+        "id": "msg_1793533915730",
+        "sender": "user",
+        "text": "ihh",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "18.51 WIB",
+        "createdAt": "2026-11-01T11:51:55.730Z"
+      },
+      {
+        "id": "reply_1793533915731",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Lho kenapa kok bilang 'ihh'? Ada yang bikin kamu risih, takut, atau kesel di kampus? Boleh banget cerita pelan-pelan ya ke Dewi.",
+        "timestamp": "18.51 WIB",
+        "createdAt": "2026-11-01T11:51:56.330Z"
+      },
+      {
+        "id": "officer_1793533945914",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Halo, ini Dewi langsung yang balas. Jangan takut ya, kamu bisa ketemu saya langsung di Gedung Rektorat atau kita lanjut chat di sini.",
+        "isAdminReply": true,
+        "timestamp": "18.52 WIB",
+        "createdAt": "2026-11-01T11:52:25.914Z"
+      },
+      {
+        "id": "officer_1793534587598",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "ihh kamu kenapaaa",
+        "isAdminReply": true,
+        "timestamp": "19.03 WIB",
+        "createdAt": "2026-11-01T12:03:07.594Z"
+      },
+      {
+        "id": "officer_1793534766113",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Iya, kenapa tuh? Cerita dong, Dewi dengerin di sini kok! Ada kejadian apa barusan?",
+        "isAdminReply": true,
+        "timestamp": "19.06 WIB",
+        "createdAt": "2026-11-01T12:06:06.106Z"
+      },
+      {
+        "id": "msg_1793535215184",
+        "sender": "user",
+        "text": "aku mau curhat ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:35.179Z"
+      },
+      {
+        "id": "reply_1793535215185",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Tentu saja boleh banget! Ruang ini aman dan rahasia 100%. Ceritain aja apa yang kamu rasakan, Dewi ada buat dengerin kamu ❤️",
+        "timestamp": "19.13 WIB",
+        "createdAt": "2026-11-01T12:13:35.784Z"
+      },
+      {
+        "id": "msg_1793535445649",
+        "sender": "user",
+        "text": "dosen pembimbing ngomong mesum dan ngancam nilai skripsiku di lab",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.17 WIB",
+        "createdAt": "2026-11-01T12:17:25.649Z"
+      },
+      {
+        "id": "reply_1793535445651",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Dewi pastikan: kamu berhak mendapat perlindungan akademik penuh dari Rektorat! Satgas PPKS UTDI punya wewenang resmi memfasilitasi perlindungan agar nilai mata kuliah atau bimbingan skripsimu tidak boleh diintervensi oleh terlapor. Tindakan dosen tersebut adalah pelanggaran relasi kuasa berat. Kamu sangat berani sudah bersuara ke Dewi. Ceritakan kronologinya, kami lindungi status akademikmu sepenuhnya.",
+        "timestamp": "19.17 WIB",
+        "createdAt": "2026-11-01T12:17:26.250Z"
+      },
+      {
+        "id": "msg_1793535566990",
+        "sender": "user",
+        "text": "kakak tingkat maksa megang tangan dan narik bajuku di lab terpadu",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.19 WIB",
+        "createdAt": "2026-11-01T12:19:26.989Z"
+      },
+      {
+        "id": "reply_1793535566991",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Ya ampun, Dewi ikut prihatin dan menegaskan bahwa kamu sama sekali tidak bersalah atas kejadian ini. Tindakan memegang atau memaksamu di area Laboratorium adalah bentuk kekerasan seksual berat! Dewi siap mendampingi kamu membuat laporan resmi, mengamankan bukti, dan meminta perlindungan kampus agar pelaku tidak mendekatimu lagi. Apakah kamu sekarang berada di tempat yang aman? Boleh ceritakan detail kejadiannya pelan-pelan ke Dewi ya ❤️",
+        "timestamp": "19.19 WIB",
+        "createdAt": "2026-11-01T12:19:27.590Z"
+      },
+      {
+        "id": "msg_1793535762806",
+        "sender": "user",
+        "text": "ihh sedih ",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.22 WIB",
+        "createdAt": "2026-11-01T12:22:42.806Z"
+      },
+      {
+        "id": "reply_1793535762808",
+        "sender": "satgas",
+        "officerName": "Satgas Dewi",
+        "text": "Lho kenapa kok bilang 'ihh'? Ada yang bikin kamu risih, takut, atau kesel di kampus? Boleh banget cerita pelan-pelan ya ke Dewi.",
+        "timestamp": "19.22 WIB",
+        "createdAt": "2026-11-01T12:22:43.407Z"
       }
     ],
     "satgas-abel": [
@@ -413,6 +876,23 @@
         "text": "Hai Hari ini Satgas Abel di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️",
         "timestamp": "10:12 WIB",
         "createdAt": "2026-10-31T16:01:13.014Z"
+      },
+      {
+        "id": "msg_1793535482255",
+        "sender": "user",
+        "text": "aku syok banget gemetar dan takut ke kampus setelah kejadian tadi",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.18 WIB",
+        "createdAt": "2026-11-01T12:18:02.255Z"
+      },
+      {
+        "id": "reply_1793535482257",
+        "sender": "satgas",
+        "officerName": "Satgas Abel",
+        "text": "Halo, Abel di sini. Ambil napas dalam-dalam... hembuskan perlahan. Rasa cemas, takut, atau gemetar yang kamu rasakan adalah reaksi wajar dari tubuhmu setelah menghadapi kejadian tidak menyenangkan. Kamu sangat berani sudah menghubungi kami. Abel siap memfasilitasi sesi konseling pemulihan psikologis secara privat dan nyaman.",
+        "timestamp": "19.18 WIB",
+        "createdAt": "2026-11-01T12:18:02.856Z"
       }
     ],
     "satgas-putra": [
@@ -422,6 +902,23 @@
         "text": "Halo, Satgas Putra di sini. Tim keamanan & investigasi siap mendampingi Anda di kampus.",
         "timestamp": "10:15 WIB",
         "createdAt": "2026-10-31T16:01:13.014Z"
+      },
+      {
+        "id": "msg_1793535457292",
+        "sender": "user",
+        "text": "ada orang mencurigakan ngikutin aku di parkiran motor",
+        "isAnonymous": true,
+        "attachmentUrl": null,
+        "timestamp": "19.17 WIB",
+        "createdAt": "2026-11-01T12:17:37.291Z"
+      },
+      {
+        "id": "reply_1793535457293",
+        "sender": "satgas",
+        "officerName": "Satgas Putra",
+        "text": "Satgas Putra monitor. Terkait laporan di area Parkiran Kampus, tim investigasi lapangan segera memeriksa rekaman CCTV kampus di titik lokasi kejadian. Pos Satpam Utama juga kami siagakan untuk patroli pengamanan. Tolong berikan ciri-ciri terlapor atau pakaian yang dikenakan jika Anda sempat melihatnya.",
+        "timestamp": "19.17 WIB",
+        "createdAt": "2026-11-01T12:17:37.892Z"
       }
     ]
   },

@@ -12,6 +12,7 @@ import {
   biznetConfig, 
   testBiznetConnection 
 } from './storage.js';
+import { syncAllDataToBiznetGio } from './sync.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,7 +56,7 @@ const initialData = {
     fakultas: "Fakultas Teknologi Informasi",
     angkatan: "2024",
     email: "dewi.rahmawati24@students.utdi.ac.id",
-    phone: "0812-2456-7890",
+    phone: "0823-1778-9406",
     alamat: "Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY",
     avatar: "/assets/dewi-avatar.jpg",
     emergencyContacts: [
@@ -84,9 +85,9 @@ const initialData = {
       id: "en_2",
       category: "ppks",
       title: "Satgas PPKS UTDI",
-      phone: "0811-2555-7788",
-      whatsapp: "081125557788",
-      description: "Pencegahan & Penanganan Kekerasan Seksual (Kerahasiaan 100% Terjamin).",
+      phone: "0823-1778-9406",
+      whatsapp: "082317789406",
+      description: "Pencegahan & Penanganan Kekerasan Seksual (Satgas Dewi - Siaga 24 Jam).",
       badge: "Paling Rahasia",
       isPrimary: true
     },
@@ -104,8 +105,8 @@ const initialData = {
       id: "en_4",
       category: "medis",
       title: "Layanan Bimbingan Konseling UTDI",
-      phone: "0812-2900-5522",
-      whatsapp: "081229005522",
+      phone: "0823-1778-9406",
+      whatsapp: "082317789406",
       description: "Dukungan konseling psikologis dan pendampingan mental mahasiswa.",
       badge: "Gratis",
       isPrimary: false
@@ -476,7 +477,7 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 app.post('/api/auth/register', (req, res) => {
-  const { name, nim, email, phone, prodi } = req.body;
+  const { name, nim, email, phone, prodi, emergencyContacts } = req.body;
   const db = getDb();
   const newUser = {
     ...db.user,
@@ -486,13 +487,17 @@ app.post('/api/auth/register', (req, res) => {
     nim: nim || db.user.nim,
     email: email || db.user.email,
     phone: phone || db.user.phone,
-    prodi: prodi || db.user.prodi
+    prodi: prodi || db.user.prodi,
+    emergencyContacts: (emergencyContacts && emergencyContacts.length > 0) 
+      ? emergencyContacts 
+      : db.user.emergencyContacts
   };
   db.user = newUser;
   saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
   res.json({
     success: true,
-    message: "Akun mahasiswa berhasil didaftarkan!",
+    message: "Akun mahasiswa beserta kontak darurat orang tua berhasil didaftarkan!",
     user: newUser
   });
 });
@@ -511,9 +516,12 @@ app.put('/api/auth/profile', (req, res) => {
     avatar: avatar !== undefined ? avatar : db.user.avatar
   };
   saveDb(db);
+  // Auto-sync updated profile, email, and photo to Biznet GIO NEO Object Storage
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
+
   res.json({
     success: true,
-    message: "Profil mahasiswa berhasil diperbarui!",
+    message: "Profil mahasiswa berhasil diperbarui di database & Biznet GIO!",
     user: db.user
   });
 });
@@ -565,6 +573,7 @@ app.post('/api/auth/emergency-contacts', (req, res) => {
   };
   db.user.emergencyContacts.push(newContact);
   saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
   res.json({
     success: true,
     message: "Kontak darurat kerabat berhasil ditambahkan!",
@@ -577,6 +586,7 @@ app.delete('/api/auth/emergency-contacts/:id', (req, res) => {
   const db = getDb();
   db.user.emergencyContacts = db.user.emergencyContacts.filter(c => c.id !== id);
   saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
   res.json({
     success: true,
     message: "Kontak darurat berhasil dihapus",
@@ -628,6 +638,7 @@ app.post('/api/emergency/sos', (req, res) => {
 
   db.sosReports.unshift(newReport);
   saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
 
   activeSos = newReport;
 
@@ -721,7 +732,8 @@ const satgasResponses = {
   ],
   'satgas-dewi': [
     "Hai! Terima kasih sudah berani bercerita ke Dewi. Kamu sangat berani dan tidak sendiri. Ceritakan pelan-pelan ya, aku mendengarkan.",
-    "Perasaanmu valid. Dewi siap mendampingi proses mediasi atau bimbingan konseling jika kamu menginginkannya❤️"
+    "Perasaanmu valid. Dewi siap mendampingi proses mediasi atau bimbingan konseling jika kamu menginginkannya❤️",
+    "Dewi ada di sini menemani kamu. Apapun yang terjadi di kampus, kamu punya hak untuk merasa aman dan terlindungi."
   ],
   'satgas-abel': [
     "Halo, Abel mendengarkan. Ambil napas sejenak, kita bicarakan perlahan. Kesehatan mental dan rasa amanmu adalah prioritas utama.",
@@ -732,6 +744,107 @@ const satgasResponses = {
     "Laporan Anda segera kami koordinasikan dengan tim patroli pos satpam utama UTDI."
   ]
 };
+
+/**
+ * Intelligent Multi-Satgas Complaint Analyzer & Natural Context Engine
+ * Menganalisis pengaduan mahasiswa (pelecehan fisik, verbal, online, penguntitan, relasi kuasa dosen/kating, dsb)
+ * dan memberikan respon langsung yang akurat sesuai peran Satgas yang dipilih (Dewi, Pusat, Abel, Putra)
+ */
+function generateContextualReply(room, userText, lastReplyText) {
+  const text = (userText || '').toLowerCase().trim();
+
+  // Ekstraksi Entitas dari Teks Mahasiswa
+  const isPhysical = /pegang|raba|sentuh|cium|peluk|tarik|paksa|grepe|tindih|remas|baju|paha|dada|fisik/i.test(text);
+  const isVerbal = /omongan|ngomong|mesum|catcall|godain|seksis|kata.*kotor|candaan|cabul|pembicaraan/i.test(text);
+  const isCyber = /sebar|foto|video|vcs|pap|telanjang|syur|screenshot|ss.*chat|doxxing|wa|telegram|medsos|ig/i.test(text);
+  const isStalking = /ikutin|ngikutin|buntuti|ngeliatin|mengawasi|dicurigai|intai|pantau/i.test(text);
+  const isDosen = /dosen|pembimbing|kaprodi|penguji|skripsi|nilai|matkul|ruang.*dosen/i.test(text);
+  const isKating = /kakak.*tingkat|kating|senior|ormawa|bem|hima|kak.*kelas/i.test(text);
+  const isPacar = /pacar|mantan|gebetan|hubungan.*intim|maksa.*tidur/i.test(text);
+  const isEmosional = /takut|gemetar|nangis|syok|trauma|malu|cemas|panik|pusing|gak.*berani/i.test(text);
+
+  // Deteksi Lokasi Kampus
+  let lokasi = '';
+  if (/lab/i.test(text)) lokasi = 'area Laboratorium';
+  else if (/parkir/i.test(text)) lokasi = 'area Parkiran Kampus';
+  else if (/perpus/i.test(text)) lokasi = 'area Perpustakaan';
+  else if (/gedung.*[1-3]|gedung.*kuliah/i.test(text)) lokasi = 'Gedung Kuliah Terpadu';
+  else if (/lorong|koridor/i.test(text)) lokasi = 'lorong kampus';
+  else if (/kantin/i.test(text)) lokasi = 'area Kantin';
+  else if (/kost/i.test(text)) lokasi = 'lingkungan sekitar kost';
+
+  // 1. PENANGANAN SPESIFIK: SATGAS DEWI (Divisi Advokasi & Pendampingan Korban)
+  if (room === 'satgas-dewi') {
+    if (isPhysical) {
+      return `Ya ampun, Dewi ikut prihatin dan menegaskan bahwa kamu sama sekali tidak bersalah atas kejadian ini. Tindakan memegang atau memaksamu ${lokasi ? `di ${lokasi} ` : ''}adalah bentuk kekerasan seksual berat! Dewi siap mendampingi kamu membuat laporan resmi, mengamankan bukti, dan meminta perlindungan kampus agar pelaku tidak mendekatimu lagi. Apakah kamu sekarang berada di tempat yang aman? Boleh ceritakan detail kejadiannya pelan-pelan ke Dewi ya ❤️`;
+    }
+    if (isCyber) {
+      return `Penting banget: tolong jangan turuti ancamannya dan jangan hapus pesan chat atau file apapun! Screenshot semua bukti ancaman dan profil pelaku sekarang. Ancaman penyebaran konten pribadi adalah tindak pidana KBGO & UU ITE. Dewi dan tim advokasi Satgas PPKS UTDI akan mendampingi kamu menindak tegas pelakunya secara hukum dengan jaminan kerahasiaan identitas 100%. Ceritakan siapa pelakunya ke Dewi ya.`;
+    }
+    if (isDosen) {
+      return `Dewi pastikan: kamu berhak mendapat perlindungan akademik penuh dari Rektorat! Satgas PPKS UTDI punya wewenang resmi memfasilitasi perlindungan agar nilai mata kuliah atau bimbingan skripsimu tidak boleh diintervensi oleh terlapor. Tindakan dosen tersebut adalah pelanggaran relasi kuasa berat. Kamu sangat berani sudah bersuara ke Dewi. Ceritakan kronologinya, kami lindungi status akademikmu sepenuhnya.`;
+    }
+    if (isStalking) {
+      return `Bahaya banget kalau kamu merasa dibuntuti ${lokasi ? `di ${lokasi}` : 'di kampus'}! Dewi langsung siagakan tim pengamanan pos satpam. Sekarang posisi kamu persisnya ada di mana? Mau Dewi minta petugas satpam temani dan kawal kamu sampai ke tempat aman atau kendaraanmu sekarang?`;
+    }
+    if (isVerbal) {
+      return `Duh, perkataan seperti itu sangat merendahkan dan sama sekali tidak bisa dibiarkan di lingkungan kampus UTDI. Jangan anggap sepele ya, kamu berhak merasa aman dan dihormati. Dewi siap membantu proses mediasi atau pemanggilan terlapor oleh tim Satgas PPKS secara tertutup tanpa menyebutkan identitasmu. Ceritakan siapa yang mengatakannya ya.`;
+    }
+    if (isKating || isPacar) {
+      return `Kamu tidak sendirian. Status sebagai ${isKating ? 'kakak tingkat' : 'pasangan/teman'} sama sekali tidak memberi hak bagi siapapun untuk berbuat tidak senonoh atau memaksa kamu. Dewi ada di sini siap mendampingi setiap langkahmu. Boleh ceritakan bagaimana awal peristiwanya?`;
+    }
+    if (isEmosional) {
+      return `Tarik napas perlahan ya... Kamu aman bercerita ke Dewi sekarang. Wajar sekali merasa syok atau takut setelah mengalami hal itu. Dewi tidak akan mendesak, ceritakan pelan-pelan kapanpun kamu merasa siap. Ruang ini rahasia dan aman buat kamu ❤️`;
+    }
+    // Percakapan santai ke Dewi
+    if (/tau\s*ga+|tau\s*gk|tau\s*nggak/i.test(text)) {
+      const replies = [
+        "Iya, kenapa tuh? Cerita dong, Dewi dengerin di sini kok! Ada kejadian apa barusan di kampus?",
+        "Eh ada apa tuh? Cerita aja pelan-pelan ke Dewi, jangan dipendam sendiri ya!",
+        "Iya kenapa? Boleh banget diceritain ke Dewi, ada hal yang bikin risih atau mengganjal?"
+      ];
+      return replies.find(r => r !== lastReplyText) || replies[0];
+    }
+    if (/^i+h+|kesel|sebel|jengkel|gemes|badmood|bete/i.test(text)) {
+      return "Lho kenapa kok bilang 'ihh'? Ada yang bikin kamu risih, takut, atau kesel di kampus? Boleh banget cerita pelan-pelan ya ke Dewi.";
+    }
+    if (/^(halo|hai|hey|hei|p\b|assalamu|pagi|siang|sore|malam)/i.test(text)) {
+      return "Halo! Satgas Dewi siaga di sini. Jangan ragu ya, kamu aman bercerita. Ada apa atau ada yang bisa Dewi bantu?";
+    }
+  }
+
+  // 2. PENANGANAN SPESIFIK: SATGAS PUTRA (Tim Investigasi & Patroli Keamanan)
+  if (room === 'satgas-putra') {
+    if (isStalking || isPhysical || lokasi) {
+      return `Satgas Putra monitor. Terkait laporan ${lokasi ? `di ${lokasi}` : 'tersebut'}, tim investigasi lapangan segera memeriksa rekaman CCTV kampus di titik lokasi kejadian. Pos Satpam Utama juga kami siagakan untuk patroli pengamanan. Tolong berikan ciri-ciri terlapor atau pakaian yang dikenakan jika Anda sempat melihatnya.`;
+    }
+    return `Halo, Satgas Putra menerima laporan Anda. Kami memprioritaskan keamanan fisik mahasiswa di seluruh area kampus UTDI. Jangan ragu memberikan titik koordinat atau lokasi kejadian agar tim investigasi bisa menindaklanjuti.`;
+  }
+
+  // 3. PENANGANAN SPESIFIK: SATGAS ABEL (Konselor Psikologis & Trauma Healing)
+  if (room === 'satgas-abel') {
+    if (isEmosional || isPhysical || isVerbal) {
+      return `Halo, Abel di sini. Ambil napas dalam-dalam... hembuskan perlahan. Rasa cemas, takut, atau gemetar yang kamu rasakan adalah reaksi wajar dari tubuhmu setelah menghadapi kejadian tidak menyenangkan. Kamu sangat berani sudah menghubungi kami. Abel siap memfasilitasi sesi konseling pemulihan psikologis secara privat dan nyaman.`;
+    }
+    return `Halo, Abel mendengarkan dengan penuh empati. Luapkan apapun perasaan atau kekhawatiran yang sedang kamu alami, tidak ada penghakiman di ruang ini. Kesehatan mental dan ketenanganmu adalah hal yang paling berharga.`;
+  }
+
+  // 4. PENANGANAN SPESIFIK: SATGAS PUSAT (Hotline Resmi PPKS UTDI)
+  if (room === 'satgas-pusat') {
+    return `Satgas Pusat PPKS UTDI telah mencatat laporan Anda dalam buku register aduan. Sesuai Permendikbudristek No. 30 Tahun 2021, identitas Anda dilindungi secara anonim dan terjamin dari segala bentuk ancaman maupun intimidasi. Tim pemeriksa resmi siap memproses penanganan kasus ini. Mohon lengkapi kronologi kejadian atau perkiraan waktu insiden.`;
+  }
+
+  // 5. CHATBOT / ASISTEN VIRTUAL
+  if (room === 'chatbot') {
+    if (isPhysical || isCyber || isDosen || isStalking) {
+      return `Laporan Anda terindikasi sebagai dugaan pelanggaran kekerasan seksual / PPKS. Kami sangat menyarankan Anda terhubung langsung dengan Satgas Dewi (Divisi Pendampingan) atau Satgas Pusat di menu di atas agar segera ditangani dengan perlindungan hukum penuh.`;
+    }
+    return `Halo! Saya asisten virtual UTDI Care. Anda dapat langsung memilih Satgas Dewi untuk curhat & pendampingan korban, Satgas Abel untuk konseling psikologis, atau Satgas Putra untuk bantuan keamanan lapangan.`;
+  }
+
+  // Fallback Umum Cerdas
+  return `Pesan Anda telah kami terima dengan kerahasiaan 100%. Tim Satgas PPKS UTDI siap mendampingi dan menindaklanjuti aduan ini. Apakah ada hal mendesak yang Anda butuhkan saat ini?`;
+}
 
 app.post('/api/counseling/chat/:room', (req, res) => {
   const { room } = req.params;
@@ -756,25 +869,159 @@ app.post('/api/counseling/chat/:room', (req, res) => {
 
   db.counselingRooms[room].push(userMessage);
 
-  const replies = satgasResponses[room] || satgasResponses.chatbot;
-  const randomReply = replies[Math.floor(Math.random() * replies.length)];
+  // Ambil pesan reply terakhir untuk mencegah repetisi
+  const previousReplies = db.counselingRooms[room].filter(m => m.sender === 'satgas' || m.sender === 'bot');
+  const lastReplyText = previousReplies.length > 0 ? previousReplies[previousReplies.length - 1].text : '';
+
+  // Buat balasan kontekstual dan natural
+  const contextualReply = generateContextualReply(room, text, lastReplyText);
 
   const replyMessage = {
     id: 'reply_' + (Date.now() + 1),
     sender: room === 'chatbot' ? 'bot' : 'satgas',
-    text: randomReply,
+    officerName: room === 'satgas-dewi' ? 'Satgas Dewi' : (room === 'satgas-abel' ? 'Satgas Abel' : (room === 'satgas-putra' ? 'Satgas Putra' : 'Satgas Pusat')),
+    text: contextualReply,
     timestamp: timeStr,
     createdAt: new Date(Date.now() + 600).toISOString()
   };
 
   db.counselingRooms[room].push(replyMessage);
   saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
 
   res.json({
     success: true,
     userMessage,
     replyMessage
   });
+});
+
+/**
+ * ========================================================
+ * 5.1 ADMIN / PENGELOLA SATGAS PORTAL ENDPOINTS
+ * ========================================================
+ */
+
+/**
+ * GET /api/admin/rooms
+ * Mengambil daftar seluruh room chat beserta pesan terakhir dan status mahasiswa
+ */
+app.get('/api/admin/rooms', (req, res) => {
+  const db = getDb();
+  const rooms = db.counselingRooms || {};
+  const roomList = [
+    { id: 'satgas-dewi', name: 'Satgas Dewi', role: 'Divisi Advokasi & Pendampingan Korban', phone: '0823-1778-9406' },
+    { id: 'satgas-pusat', name: 'Satgas Pusat', role: 'Hotline Layanan Utama PPKS UTDI', phone: '0823-1778-9406' },
+    { id: 'satgas-abel', name: 'Satgas Abel', role: 'Konselor Psikologis & Trauma Healing', phone: '0813-9876-5432' },
+    { id: 'satgas-putra', name: 'Satgas Putra', role: 'Tim Investigasi & Pengamanan Lapangan', phone: '0878-1122-3344' },
+    { id: 'chatbot', name: 'Chat Bot Virtual', role: 'Asisten Otomatis Panduan Awal', phone: '-' }
+  ].map(meta => {
+    const msgs = rooms[meta.id] || [];
+    const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+    const userMsgs = msgs.filter(m => m.sender === 'user');
+    const isAnonymous = userMsgs.length > 0 ? userMsgs[userMsgs.length - 1].isAnonymous : true;
+    const hasUnread = lastMsg && lastMsg.sender === 'user';
+    return {
+      ...meta,
+      totalMessages: msgs.length,
+      lastMessage: lastMsg,
+      isAnonymous,
+      studentName: isAnonymous ? 'Mahasiswa (Anonim)' : (db.user?.fullName || 'Dewi Rahmawati'),
+      studentNim: isAnonymous ? 'Privasi Terlindungi' : (db.user?.nim || '245410024'),
+      hasUnread
+    };
+  });
+
+  res.json({ success: true, rooms: roomList });
+});
+
+/**
+ * POST /api/counseling/chat/:room/admin
+ * Admin/Petugas Satgas membalas pesan secara manual langsung dari portal pengelola
+ */
+app.post('/api/counseling/chat/:room/admin', (req, res) => {
+  const { room } = req.params;
+  const { text, officerName = 'Satgas Dewi' } = req.body;
+  if (!text || !text.trim()) {
+    return res.status(400).json({ success: false, message: 'Pesan balasan petugas tidak boleh kosong' });
+  }
+
+  const db = getDb();
+  if (!db.counselingRooms) db.counselingRooms = {};
+  if (!db.counselingRooms[room]) db.counselingRooms[room] = [];
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
+
+  const adminMsg = {
+    id: 'officer_' + Date.now(),
+    sender: 'satgas',
+    officerName: officerName,
+    text: text.trim(),
+    isAdminReply: true,
+    timestamp: timeStr,
+    createdAt: now.toISOString()
+  };
+
+  db.counselingRooms[room].push(adminMsg);
+  saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
+
+  res.json({
+    success: true,
+    message: 'Balasan Petugas Satgas berhasil dikirim ke mahasiswa!',
+    replyMessage: adminMsg
+  });
+});
+
+/**
+ * PUT /api/admin/reports/:id/status
+ * Admin mengubah status laporan darurat SOS
+ */
+app.put('/api/admin/reports/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status, note, officer } = req.body;
+  const db = getDb();
+  const report = db.sosReports.find(r => r.id === id);
+  if (!report) {
+    return res.status(404).json({ success: false, message: 'Laporan tidak ditemukan' });
+  }
+
+  if (status) {
+    report.status = status;
+    if (status === 'Selesai') report.statusColor = 'bg-emerald-500';
+    else if (status === 'Sedang Ditangani') report.statusColor = 'bg-amber-500';
+    else if (status === 'Petugas Menuju Lokasi') report.statusColor = 'bg-red-500';
+    else if (status === 'Dibatalkan') report.statusColor = 'bg-slate-500';
+  }
+  if (note) report.officerNote = note;
+  if (officer) report.officer = officer;
+
+  saveDb(db);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Sync failed:', err.message));
+
+  res.json({
+    success: true,
+    message: `Status laporan ${id} berhasil diperbarui menjadi "${status}"`,
+    report
+  });
+});
+
+/**
+ * POST /api/admin/sync
+ * Admin memicu sinkronisasi manual ke Biznet GIO
+ */
+app.post('/api/admin/sync', async (req, res) => {
+  try {
+    const result = await syncAllDataToBiznetGio();
+    res.json({
+      success: true,
+      message: 'Semua database, foto, dan laporan berhasil disinkronkan ke Biznet GIO!',
+      result
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Gagal sync ke Biznet GIO: ' + err.message });
+  }
 });
 
 app.get('/api/counselors', (req, res) => {
@@ -816,4 +1063,5 @@ app.listen(PORT, () => {
   console.log(`🏫 Universitas Teknologi Digital Indonesia (STMIK AKAKOM)`);
   console.log(`💾 Live DB: ${dbPath}`);
   console.log(`=======================================================`);
+  syncAllDataToBiznetGio().catch(err => console.warn('[Biznet GIO] Initial sync error:', err.message));
 });

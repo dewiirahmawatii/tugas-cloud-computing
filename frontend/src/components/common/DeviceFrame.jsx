@@ -8,7 +8,8 @@ export default function DeviceFrame({
   soundEnabled, 
   onToggleSound, 
   deviceMode, 
-  onSetDeviceMode 
+  onSetDeviceMode,
+  onOpenAdminLanding
 }) {
   const screensList = [
     { id: 'splash', label: '1. On Boarding 1 (Logo UTDI)' },
@@ -29,7 +30,7 @@ export default function DeviceFrame({
     { id: 'konselor-list', label: '16. Daftar Konselor (kon...)' },
     { id: 'chat-room', label: '17. Chat Room Konseling' },
     { id: 'voice-call', label: '18. Panggilan Suara Konselor' },
-    { id: 'informasi-list', label: '19. Panduan Edukasi (Inf...)' },
+    { id: 'informasi-list', label: '19. Panduan Edukasi (Inf...)' }
   ];
 
   return (
@@ -88,6 +89,19 @@ export default function DeviceFrame({
             {soundEnabled ? <Volume2 className="w-4 h-4 text-[#F5A623]" /> : <VolumeX className="w-4 h-4" />}
             <span className="hidden sm:inline">{soundEnabled ? 'Audio Aktif' : 'Mute'}</span>
           </button>
+
+          {/* Button to open Standalone Admin Landing Page */}
+          {onOpenAdminLanding && (
+            <button
+              type="button"
+              onClick={onOpenAdminLanding}
+              className="px-3 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-md bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white border border-emerald-400/40 shadow-emerald-950/40"
+              title="Buka Landing Page Khusus Admin / Petugas Satgas"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping"></span>
+              <span>🛡️ Landing Page Admin Satgas</span>
+            </button>
+          )}
 
           {/* Device Frame View Toggle */}
           <div className="flex items-center bg-[#162a4d] p-1 rounded-xl border border-blue-400/30">

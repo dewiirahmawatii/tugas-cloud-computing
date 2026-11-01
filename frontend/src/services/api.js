@@ -7,7 +7,7 @@ export const api = {
   // ========================================================
   // 1. Storage & Media Upload Service
   // ========================================================
-  
+
   /**
    * Upload file multipart (File objek dari input file/kamera)
    * Mengembalikan { success: true, url: "/uploads/...", filename: "..." }
@@ -368,6 +368,56 @@ export const api = {
       return await res.json();
     } catch (e) {
       return { success: true, articles: [] };
+    }
+  },
+
+  // ========================================================
+  // 6. Admin / Petugas Satgas Portal Services
+  // ========================================================
+  async getAdminRooms() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/rooms`);
+      if (!res.ok) throw new Error('Failed to fetch admin rooms');
+      return await res.json();
+    } catch (e) {
+      return { success: false, rooms: [] };
+    }
+  },
+
+  async sendAdminMessage(room, { text, officerName = 'Satgas Dewi' }) {
+    try {
+      const res = await fetch(`${API_BASE}/counseling/chat/${room}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, officerName })
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  },
+
+  async updateReportStatus(id, { status, note, officer }) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/reports/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, note, officer })
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  },
+
+  async syncBiznetManual() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/sync`, {
+        method: 'POST'
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: e.message };
     }
   }
 };

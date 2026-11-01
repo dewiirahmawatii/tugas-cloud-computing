@@ -4,6 +4,7 @@ import {
   Camera, Upload, X, Check, Image as ImageIcon, Navigation 
 } from 'lucide-react';
 import HeaderBar from '../common/HeaderBar';
+import RealMapView from '../common/RealMapView';
 import { api } from '../../services/api';
 
 export default function LaporDaruratScreen({ onBack, onSubmitSos }) {
@@ -79,50 +80,14 @@ export default function LaporDaruratScreen({ onBack, onSubmitSos }) {
       {/* Scrollable Body */}
       <div className="flex-1 overflow-y-auto min-h-0 pb-6">
 
-        {/* Visual Simulated Map View */}
-        <div className="relative w-full h-40 bg-[#0c1833] overflow-hidden border-b border-blue-900/60 shadow-inner">
-          
-          {/* Map Grid Pattern */}
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
-          
-          {/* Map roads / buildings vector simulation */}
-          <svg className="absolute inset-0 w-full h-full opacity-30 stroke-blue-400" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="50" x2="400" y2="70" strokeWidth="4" />
-            <line x1="120" y1="0" x2="160" y2="200" strokeWidth="6" />
-            <line x1="280" y1="0" x2="250" y2="200" strokeWidth="4" />
-            <rect x="50" y="80" width="60" height="50" fill="rgba(37,99,235,0.2)" strokeWidth="1" />
-            <rect x="180" y="30" width="80" height="60" fill="rgba(37,99,235,0.3)" strokeWidth="1" />
-            <rect x="180" y="110" width="70" height="50" fill="rgba(37,99,235,0.2)" strokeWidth="1" />
-          </svg>
-
-          {/* Campus Name Tag */}
-          <div className="absolute top-3 left-3 bg-[#0a1428]/90 border border-blue-800/80 px-2.5 py-1 rounded-lg backdrop-blur-md">
-            <span className="text-[10px] font-black text-white">KAMPUS UTDI JOGJA</span>
-            <span className="text-[9px] text-blue-300 block">Jl. Raya Janti No. 143</span>
-          </div>
-
-          {/* User Location Radar Pin */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-            <div className="relative flex items-center justify-center">
-              <span className="w-12 h-12 rounded-full bg-red-500/20 animate-ping absolute"></span>
-              <span className="w-8 h-8 rounded-full bg-red-600/40 border-2 border-red-400 flex items-center justify-center shadow-lg">
-                <MapPin className="w-4 h-4 text-white" />
-              </span>
-            </div>
-            <span className="text-[9px] font-bold bg-black/80 text-white px-2 py-0.5 rounded-full mt-1 border border-white/20">
-              Lokasi Anda (Akurat)
-            </span>
-          </div>
-
-          {/* GPS re-center button */}
-          <button
-            type="button"
-            onClick={() => alert("Lokasi GPS diperbarui ke titik koordinat kampus UTDI.")}
-            className="absolute bottom-3 right-3 bg-blue-600/90 text-white p-2 rounded-xl shadow-lg border border-blue-400/50 hover:bg-blue-500"
-          >
-            <Navigation className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Real Interactive Street & Satellite Map View */}
+        <RealMapView 
+          height="h-48"
+          emergencyLocation={locationName}
+          onRecenter={() => {
+            setLocationName('Gedung Lab Terpadu Lt. 2, Kampus UTDI');
+          }}
+        />
 
         {/* Lapor Darurat Form */}
         <form onSubmit={handleSubmit} className="px-5 py-4 space-y-3.5">

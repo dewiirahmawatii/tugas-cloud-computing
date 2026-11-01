@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, MessageSquare, Shield, AlertTriangle, Copy, Check, Search, ExternalLink } from 'lucide-react';
 import HeaderBar from '../common/HeaderBar';
+import CallModal from '../common/CallModal';
 import { api } from '../../services/api';
 
-export default function NomorDaruratScreen({ onBack }) {
+export default function NomorDaruratScreen({ onBack, onStartVoiceCall }) {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [copiedId, setCopiedId] = useState(null);
+  const [selectedCallContact, setSelectedCallContact] = useState(null);
 
   useEffect(() => {
     api.getEmergencyNumbers().then((res) => {
@@ -21,6 +23,16 @@ export default function NomorDaruratScreen({ onBack }) {
     navigator.clipboard?.writeText(phone);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleOpenCallModal = (contact) => {
+    setSelectedCallContact({
+      title: contact.title,
+      role: contact.description,
+      phone: contact.phone,
+      rawPhone: contact.phone,
+      whatsapp: contact.whatsapp || '6282317789406'
+    });
   };
 
   const filteredContacts = contacts.filter((c) => {
@@ -108,14 +120,15 @@ export default function NomorDaruratScreen({ onBack }) {
             {/* Action buttons */}
             <div className="mt-3 pt-2.5 border-t border-blue-950 flex items-center space-x-2">
               
-              {/* Direct Call Button */}
-              <a
-                href={`tel:${c.phone}`}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-950/50 transition active:scale-97"
+              {/* Direct Call Button -> Opens Smart Call Modal (No OS crash!) */}
+              <button
+                type="button"
+                onClick={() => handleOpenCallModal(c)}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-950/50 transition active:scale-97 cursor-pointer"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>Panggil</span>
-              </a>
+              </button>
 
               {/* WhatsApp Button if available */}
               {c.whatsapp && (
@@ -123,7 +136,7 @@ export default function NomorDaruratScreen({ onBack }) {
                   href={`https://wa.me/${c.whatsapp.replace(/[^0-9]/g, '')}?text=Halo%20saya%20mahasiswa%20UTDI%20butuh%20bantuan%20darurat`}
                   target="_blank"
                   rel="noreferrer"
-                  className="bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 border border-emerald-600/40 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1 transition"
+                  className="bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 border border-emerald-600/40 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1 transition cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>WA</span>
@@ -132,8 +145,9 @@ export default function NomorDaruratScreen({ onBack }) {
 
               {/* Copy Number */}
               <button
+                type="button"
                 onClick={() => handleCopy(c.id, c.phone)}
-                className="bg-[#12244a] hover:bg-[#183163] text-slate-300 border border-blue-900/60 py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1 transition"
+                className="bg-[#12244a] hover:bg-[#183163] text-slate-300 border border-blue-900/60 py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1 transition cursor-pointer"
               >
                 {copiedId === c.id ? (
                   <>
@@ -152,6 +166,14 @@ export default function NomorDaruratScreen({ onBack }) {
           </div>
         ))}
       </div>
+
+      {/* Smart Call Modal */}
+      <CallModal
+        isOpen={!!selectedCallContact}
+        onClose={() => setSelectedCallContact(null)}
+        contact={selectedCallContact || {}}
+        onStartVoiceCall={onStartVoiceCall}
+      />
 
     </div>
   );

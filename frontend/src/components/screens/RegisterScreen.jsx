@@ -1,26 +1,49 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, Heart, Phone, User } from 'lucide-react';
 import HeaderBar from '../common/HeaderBar';
+import { api } from '../../services/api';
 
 export default function RegisterScreen({ onRegisterSuccess, onBackToLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phone, setPhone] = useState('0823-1778-9406');
+  
+  // Emergency Contact (Orang Tua / Wali)
+  const [parentName, setParentName] = useState('Bambang Suharsono (Ayah)');
+  const [parentRelation, setParentRelation] = useState('Orang Tua (Ayah)');
+  const [parentPhone, setParentPhone] = useState('0813-9988-7766');
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert("Konfirmasi kata sandi tidak cocok!");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await api.register({
+        email,
+        phone,
+        emergencyContacts: [
+          {
+            id: 'ec_' + Date.now(),
+            name: parentName,
+            relationship: parentRelation,
+            phone: parentPhone
+          }
+        ]
+      });
       setLoading(false);
       onRegisterSuccess();
-    }, 400);
+    } catch (err) {
+      setLoading(false);
+      onRegisterSuccess();
+    }
   };
 
   return (
@@ -110,6 +133,79 @@ export default function RegisterScreen({ onRegisterSuccess, onBackToLogin }) {
               >
                 {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
+            </div>
+          </div>
+
+          {/* Nomor HP Mahasiswa */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-semibold text-slate-200">
+              Nomor Telepon / WhatsApp Mahasiswa
+            </label>
+            <input
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="0823-1778-9406"
+              className="w-full bg-[#CBD5E1] text-slate-900 border border-transparent rounded-xl px-3.5 py-2 text-xs placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#F5A623] font-medium"
+            />
+          </div>
+
+          {/* Bagian Khusus: Kontak Darurat Terpercaya (Orang Tua / Wali) */}
+          <div className="bg-[#13274c] border border-amber-400/50 rounded-2xl p-3.5 space-y-2.5 mt-2">
+            <div className="flex items-center space-x-2">
+              <Heart className="w-4 h-4 text-rose-400 fill-rose-400" />
+              <div>
+                <span className="text-xs font-black text-[#F5A623]">Kontak Darurat Terpercaya</span>
+                <p className="text-[9px] text-blue-200">Nomor orang tua/wali untuk perlindungan saat kondisi bahaya</p>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-slate-200">
+                Nama Orang Tua / Wali
+              </label>
+              <input
+                type="text"
+                required
+                value={parentName}
+                onChange={(e) => setParentName(e.target.value)}
+                placeholder="Contoh: Bambang Suharsono (Ayah)"
+                className="w-full bg-[#CBD5E1] text-slate-900 border border-transparent rounded-lg px-3 py-1.5 text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#F5A623] font-medium"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-200">
+                  Hubungan
+                </label>
+                <select
+                  value={parentRelation}
+                  onChange={(e) => setParentRelation(e.target.value)}
+                  className="w-full bg-[#CBD5E1] text-slate-900 border border-transparent rounded-lg px-2 py-1.5 text-xs focus:outline-none font-medium cursor-pointer"
+                >
+                  <option value="Orang Tua (Ayah)">Orang Tua (Ayah)</option>
+                  <option value="Orang Tua (Ibu)">Orang Tua (Ibu)</option>
+                  <option value="Wali">Wali Mahasiswa</option>
+                  <option value="Keluarga / Saudara">Keluarga / Saudara</option>
+                  <option value="Sahabat Terpercaya">Sahabat Terpercaya</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-semibold text-slate-200">
+                  Nomor HP Orang Tua
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={parentPhone}
+                  onChange={(e) => setParentPhone(e.target.value)}
+                  placeholder="0813-9988-7766"
+                  className="w-full bg-[#CBD5E1] text-slate-900 border border-transparent rounded-lg px-3 py-1.5 text-xs placeholder-slate-500 focus:outline-none font-medium"
+                />
+              </div>
             </div>
           </div>
 

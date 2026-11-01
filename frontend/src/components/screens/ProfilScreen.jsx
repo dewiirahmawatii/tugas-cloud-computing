@@ -67,6 +67,15 @@ export default function ProfilScreen({
   const [editAlamat, setEditAlamat] = useState(currentUser.alamat || 'Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY');
   const [isSavingBio, setIsSavingBio] = useState(false);
 
+  useEffect(() => {
+    if (currentUser) {
+      setEditName(currentUser.name || 'Dewi');
+      setEditPhone(currentUser.phone || '0812-2456-7890');
+      setEditEmail(currentUser.email || 'dewi.rahmawati24@students.utdi.ac.id');
+      setEditAlamat(currentUser.alamat || 'Jl. Raya Janti No. 143, Banguntapan, Bantul, DIY');
+    }
+  }, [currentUser]);
+
   // Privacy checkboxes state
   const [privacySettings, setPrivacySettings] = useState(
     currentUser?.privacySettings || {

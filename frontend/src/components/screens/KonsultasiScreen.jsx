@@ -5,6 +5,7 @@ import {
   Camera, Image as ImageIcon, CheckCircle2
 } from 'lucide-react';
 import { api } from '../../services/api';
+import CallModal from '../common/CallModal';
 
 export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   // Current chat room: 'chatbot', 'satgas-pusat', 'satgas-dewi', 'satgas-abel', 'satgas-putra'
@@ -13,6 +14,9 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   // Anonymous Mode Decision Modal State
   const [showAnonimModal, setShowAnonimModal] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(true);
+
+  // Call Modal State
+  const [showCallModal, setShowCallModal] = useState(false);
 
   // Storage / Attachment state
   const [attachedImage, setAttachedImage] = useState(null);
@@ -63,18 +67,28 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Load room messages from backend on mount or room change
+  // Load and poll room messages from backend on mount or room change
   useEffect(() => {
     let isMounted = true;
-    api.getRoomMessages(activeRoom).then(res => {
-      if (isMounted && res && res.messages && res.messages.length > 0) {
-        setRoomMessages(prev => ({
-          ...prev,
-          [activeRoom]: res.messages
-        }));
-      }
-    });
-    return () => { isMounted = false; };
+    
+    const fetchMessages = () => {
+      api.getRoomMessages(activeRoom).then(res => {
+        if (isMounted && res && res.messages && res.messages.length > 0) {
+          setRoomMessages(prev => ({
+            ...prev,
+            [activeRoom]: res.messages
+          }));
+        }
+      });
+    };
+
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 2500);
+
+    return () => { 
+      isMounted = false; 
+      clearInterval(interval);
+    };
   }, [activeRoom]);
 
   const currentMessages = roomMessages[activeRoom] || [];
@@ -83,22 +97,24 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages, isTyping]);
 
-  // Satgas metadata
+  // Satgas metadata - configured with REAL user phone number: 082317789406
   const satgasDirectory = {
     'satgas-pusat': {
       id: 'satgas-pusat',
       name: 'Satgas Pusat',
       role: 'Hotline Layanan Utama Satgas PPKS UTDI',
-      phone: '0811-2555-7788',
-      wa: '081125557788',
+      phone: '0823-1778-9406',
+      rawPhone: '082317789406',
+      wa: '6282317789406',
       greeting: 'Halo, ada yang bisa kami bantu?'
     },
     'satgas-dewi': {
       id: 'satgas-dewi',
       name: 'Satgas Dewi',
       role: 'Divisi Advokasi & Pendampingan Korban',
-      phone: '0812-2456-7891',
-      wa: '081224567891',
+      phone: '0823-1778-9406',
+      rawPhone: '082317789406',
+      wa: '6282317789406',
       greeting: 'Hai Hari ini Satgas Dewi di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️'
     },
     'satgas-abel': {
@@ -106,7 +122,8 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       name: 'Satgas Abel',
       role: 'Konselor Psikologis & Trauma Healing',
       phone: '0813-9876-5432',
-      wa: '081398765432',
+      rawPhone: '081398765432',
+      wa: '6281398765432',
       greeting: 'Hai Hari ini Satgas Abel di sini! Jangan ragu buat tanya apapun atau minta bantuan ya❤️'
     },
     'satgas-putra': {
@@ -114,7 +131,8 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       name: 'Satgas Putra',
       role: 'Tim Investigasi & Pengamanan Lapangan',
       phone: '0878-1122-3344',
-      wa: '087811223344',
+      rawPhone: '087811223344',
+      wa: '6287811223344',
       greeting: 'Halo, Satgas Putra di sini. Tim keamanan siap membantu Anda.'
     }
   };
@@ -324,6 +342,32 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
       </div>
 
       {/* ======================================================== */}
+      {/* 2.5 SATGAS SELECTION BAR (PILIH TUJUAN SATGAS LANGSUNG) */}
+      {/* ======================================================== */}
+      <div className="px-3 py-1.5 bg-[#12223e] border-b border-[#2b4c85] flex items-center space-x-1.5 overflow-x-auto scrollbar-none shrink-0">
+        {[
+          { id: 'satgas-dewi', name: '🌸 Satgas Dewi', sub: 'Advokasi' },
+          { id: 'satgas-pusat', name: '🏛️ Satgas Pusat', sub: 'Hotline PPKS' },
+          { id: 'satgas-abel', name: '🧠 Satgas Abel', sub: 'Psikolog' },
+          { id: 'satgas-putra', name: '🛡️ Satgas Putra', sub: 'Keamanan' },
+          { id: 'chatbot', name: '🤖 Bot UTDI', sub: 'Bantuan' }
+        ].map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setActiveRoom(s.id)}
+            className={`px-2.5 py-1 rounded-xl text-[10px] font-bold whitespace-nowrap transition cursor-pointer flex items-center space-x-1 ${
+              activeRoom === s.id
+                ? 'bg-[#F5A623] text-slate-950 font-black shadow-md'
+                : 'bg-[#1a335c] text-blue-200 hover:bg-[#234273]'
+            }`}
+          >
+            <span>{s.name}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ======================================================== */}
       {/* 3. PROFILE BANNER                                        */}
       {/* ======================================================== */}
       {activeRoom === 'chatbot' ? (
@@ -360,21 +404,23 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
 
           <div className="flex items-center space-x-2">
             <a
-              href={`https://wa.me/${currentSatgas?.wa}`}
+              href={`https://wa.me/${currentSatgas?.wa}?text=Halo%20${encodeURIComponent(currentSatgas?.name || 'Satgas')},%20saya%20mahasiswa%20UTDI%20butuh%20bantuan`}
               target="_blank"
               rel="noreferrer"
-              className="bg-[#25D366] hover:bg-emerald-500 text-slate-950 font-bold px-2.5 py-1 rounded-lg text-[10px] flex items-center space-x-1 shadow transition active:scale-95"
+              className="bg-[#25D366] hover:bg-emerald-500 text-slate-950 font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center space-x-1 shadow transition active:scale-95 cursor-pointer"
+              title="Hubungi via WhatsApp"
             >
-              <MessageSquare className="w-3 h-3" />
+              <MessageSquare className="w-3.5 h-3.5" />
               <span>WA</span>
             </a>
-            <a
-              href={`tel:${currentSatgas?.phone}`}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold p-1 rounded-lg shadow transition active:scale-95"
-              title="Telepon Langsung"
+            <button
+              type="button"
+              onClick={() => setShowCallModal(true)}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold p-1.5 rounded-xl shadow transition active:scale-95 cursor-pointer"
+              title="Panggilan Telepon (0823-1778-9406)"
             >
               <Phone className="w-3.5 h-3.5" />
-            </a>
+            </button>
           </div>
         </div>
       )}
@@ -482,25 +528,27 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
         </div>
       )}
 
-      {/* Quick Suggestion Chips */}
-      {activeRoom === 'chatbot' && (
-        <div className="px-4 py-1.5 bg-[#162a4d] flex space-x-2 overflow-x-auto border-t border-[#2b4c85] scrollbar-none shrink-0">
+      {/* Quick Suggestion Chips for Fast Complaints */}
+      <div className="px-3 py-1.5 bg-[#162a4d] flex space-x-1.5 overflow-x-auto border-t border-[#2b4c85] scrollbar-none shrink-0">
+        {[
+          "tau gaaa",
+          "ihh",
+          "Ada yang ngikutin di parkiran",
+          "Dosen pembimbing ngomong mesum",
+          "Foto pribadiku diancam disebar",
+          "Kakak tingkat maksa megang di lab",
+          "Saya takut ke kampus"
+        ].map((chip, idx) => (
           <button
+            key={idx}
             type="button"
-            onClick={() => handleSend("Saya ingin curhat")}
-            className="text-[11px] bg-[#F5A623] hover:bg-amber-400 text-slate-950 font-bold px-3 py-1 rounded-full whitespace-nowrap shadow transition active:scale-95 cursor-pointer"
+            onClick={() => handleSend(chip)}
+            className="text-[10px] bg-[#1a3563] hover:bg-[#254b8a] text-blue-200 border border-[#2b4c85] px-2.5 py-1 rounded-full whitespace-nowrap shadow-sm transition active:scale-95 cursor-pointer font-medium"
           >
-            Saya ingin curhat
+            {chip}
           </button>
-          <button
-            type="button"
-            onClick={() => handleSend("Butuh nomor kontak satgas")}
-            className="text-[11px] bg-[#1E3866] hover:bg-[#254680] text-blue-200 border border-[#2b4c85] px-3 py-1 rounded-full whitespace-nowrap transition active:scale-95 cursor-pointer"
-          >
-            Nomor Satgas
-          </button>
-        </div>
-      )}
+        ))}
+      </div>
 
       {/* Hidden File Input for Storage Upload */}
       <input
@@ -547,6 +595,20 @@ export default function KonsultasiScreen({ onBack, onStartVoiceCall }) {
           <Send className="w-4 h-4 text-slate-900 stroke-[2.5]" />
         </button>
       </div>
+
+      {/* Smart Call Modal with Real Phone Number: 0823-1778-9406 */}
+      <CallModal
+        isOpen={showCallModal}
+        onClose={() => setShowCallModal(false)}
+        contact={{
+          title: currentSatgas?.name || 'Satgas PPKS UTDI',
+          role: currentSatgas?.role || 'Layanan Advokasi & Konseling Mahasiswa',
+          phone: currentSatgas?.phone || '0823-1778-9406',
+          rawPhone: currentSatgas?.rawPhone || '082317789406',
+          whatsapp: currentSatgas?.wa || '6282317789406'
+        }}
+        onStartVoiceCall={onStartVoiceCall}
+      />
 
     </div>
   );

@@ -23,6 +23,7 @@ import VoiceCallScreen from './components/screens/VoiceCallScreen';
 import InformasiListScreen from './components/screens/InformasiListScreen';
 import InformasiDetailScreen from './components/screens/InformasiDetailScreen';
 import KonsultasiScreen from './components/screens/KonsultasiScreen';
+import AdminPortalScreen from './components/screens/AdminPortalScreen';
 
 import { api } from './services/api';
 import { playSosSiren, stopSosSiren, playBeep } from './utils/audio';
@@ -33,6 +34,14 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [deviceMode, setDeviceMode] = useState('iphone');
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Standalone Admin Landing Page State
+  const [isAdminLandingPage, setIsAdminLandingPage] = useState(() => {
+    return typeof window !== 'undefined' && (
+      window.location.pathname.startsWith('/admin') || 
+      window.location.search.includes('admin=true')
+    );
+  });
 
   // App Data State
   const [user, setUser] = useState(null);
@@ -136,6 +145,18 @@ export default function App() {
     'chat-room'
   ].includes(currentScreen);
 
+  // Check if opening dedicated standalone Admin Portal Landing Page
+  if (isAdminLandingPage) {
+    return (
+      <div className="min-h-screen bg-[#0e1d38] text-white flex flex-col font-sans">
+        <AdminPortalScreen 
+          onBack={() => setIsAdminLandingPage(false)} 
+          onSwitchToStudentMode={() => setIsAdminLandingPage(false)} 
+        />
+      </div>
+    );
+  }
+
   return (
     <DeviceFrame
       currentScreen={currentScreen}
@@ -147,6 +168,7 @@ export default function App() {
       }}
       deviceMode={deviceMode}
       onSetDeviceMode={setDeviceMode}
+      onOpenAdminLanding={() => setIsAdminLandingPage(true)}
     >
       {/* App Shell: Fixed Layout Container */}
       <div className="flex-1 flex flex-col h-full min-h-0 w-full overflow-hidden relative bg-[#1E3866]">
@@ -324,6 +346,14 @@ export default function App() {
           {currentScreen === 'nomor-darurat' && (
             <NomorDaruratScreen
               onBack={() => navigateTo('home')}
+              onStartVoiceCall={(c) => {
+                setSelectedCounselor({
+                  name: c.name || c.title || 'Satgas PPKS UTDI',
+                  title: c.title || 'Layanan Satgas PPKS (0823-1778-9406)',
+                  avatar: '/assets/satgas-ppks.jpg'
+                });
+                navigateTo('voice-call');
+              }}
             />
           )}
 

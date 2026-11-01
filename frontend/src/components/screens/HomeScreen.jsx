@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, BookOpen, MessageSquare, AlertCircle, Sun, Bell } from 'lucide-react';
+import { Phone, BookOpen, MessageSquare, AlertCircle, Sun, Bell, ShieldCheck, ChevronRight } from 'lucide-react';
 import HeaderBar from '../common/HeaderBar';
 
 export default function HomeScreen({ 
@@ -8,10 +8,27 @@ export default function HomeScreen({
   onTriggerSos, 
   soundEnabled 
 }) {
+  const [showPhoneConfirmModal, setShowPhoneConfirmModal] = useState(false);
   const [sosConfirming, setSosConfirming] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [contactPhone, setContactPhone] = useState(user?.phone || '0823-1778-9406');
+  const [notifyParents, setNotifyParents] = useState(true);
 
+  // Update phone if user data loads
+  React.useEffect(() => {
+    if (user?.phone) {
+      setContactPhone(user.phone);
+    }
+  }, [user]);
+
+  // When user taps "LAPOR DARURAT": Show phone confirmation modal first
   const handleSosPress = () => {
+    setShowPhoneConfirmModal(true);
+  };
+
+  // When user confirms phone: start countdown & dispatch SOS
+  const handleConfirmAndSendSos = () => {
+    setShowPhoneConfirmModal(false);
     setSosConfirming(true);
     let count = 3;
     setCountdown(count);
@@ -25,7 +42,8 @@ export default function HomeScreen({
         onTriggerSos({
           type: "Darurat Seketika (Tombol SOS)",
           location: "Kampus UTDI - Lab Terpadu Lt. 2",
-          note: "Sinyal SOS dipicu langsung dari tombol merah beranda aplikasi."
+          note: `Sinyal SOS dipicu langsung. Nomor aktif pelapor: ${contactPhone || user?.phone || '0823-1778-9406'}. Notifikasi ortu: ${notifyParents ? 'Aktif' : 'Tidak'}.`,
+          phone: contactPhone
         });
       }
     }, 1000);
@@ -149,6 +167,79 @@ export default function HomeScreen({
         </div>
 
       </div>
+
+      {/* Modal 1: Konfirmasi Nomor Telepon Sebelum Memencet SOS */}
+      {showPhoneConfirmModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-5 select-none animate-in fade-in duration-200">
+          <div className="w-full max-w-xs bg-gradient-to-b from-[#18325a] to-[#0f1f3d] border-2 border-[#F5A623] rounded-3xl p-5 text-center shadow-2xl relative animate-in zoom-in-95">
+            
+            {/* Header Icon */}
+            <div className="w-14 h-14 rounded-full bg-[#F5A623]/20 border-2 border-[#F5A623] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#F5A623]/30">
+              <Phone className="w-7 h-7 text-[#F5A623] animate-pulse" />
+            </div>
+
+            <h3 className="text-sm sm:text-base font-black text-white">
+              Konfirmasi Nomor Kontak Darurat
+            </h3>
+
+            <p className="text-[11px] text-blue-200 mt-1 leading-relaxed">
+              Sebelum sinyal darurat dipancarkan, pastikan nomor telepon yang bisa dihubungi petugas pos satpam sudah benar.
+            </p>
+
+            {/* Input Nomor Telepon Yang Bisa Dihubungi */}
+            <div className="mt-3 text-left">
+              <label className="text-[10px] font-bold text-slate-300 block mb-1">
+                Nomor Telepon Anda (Bisa Dihubungi Langsung):
+              </label>
+              <div className="relative flex items-center">
+                <Phone className="w-3.5 h-3.5 text-[#F5A623] absolute left-3" />
+                <input
+                  type="tel"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  placeholder="0823-1778-9406"
+                  className="w-full bg-[#0a172e] border border-blue-400/50 rounded-xl pl-9 pr-3 py-2 text-xs text-white font-bold tracking-wider focus:outline-none focus:ring-2 focus:ring-[#F5A623]"
+                />
+              </div>
+            </div>
+
+            {/* Checkbox Notifikasi Orang Tua */}
+            <div className="mt-3 bg-blue-950/60 border border-blue-800/60 p-2.5 rounded-xl text-left flex items-start space-x-2">
+              <input
+                type="checkbox"
+                id="notifyParentsCheck"
+                checked={notifyParents}
+                onChange={(e) => setNotifyParents(e.target.checked)}
+                className="mt-0.5 rounded text-[#F5A623] focus:ring-0 cursor-pointer"
+              />
+              <label htmlFor="notifyParentsCheck" className="text-[10px] text-blue-200 leading-tight cursor-pointer">
+                <strong>Notifikasi Kontak Darurat:</strong> Kirimkan sinyal lokasi darurat otomatis ke kontak orang tua / kerabat terpercaya.
+              </label>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-4 space-y-2">
+              <button
+                type="button"
+                onClick={handleConfirmAndSendSos}
+                className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-red-950/60 transition active:scale-95 cursor-pointer"
+              >
+                <Sun className="w-4 h-4 text-white stroke-[2.5]" />
+                <span>KIRIM SINYAL SOS SEKARANG</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowPhoneConfirmModal(false)}
+                className="w-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl text-xs transition cursor-pointer"
+              >
+                Batal
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* SOS Countdown Modal */}
       {sosConfirming && (
